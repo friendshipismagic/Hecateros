@@ -1,0 +1,11 @@
+<section id="links">
+  <%= for l <- @chan.links do %>
+    <div class="chan">
+      <h3><a href=<%= l.url%>><%= l.title %></a> <%= for t <- l.tags do %>
+          <a href=<%= tag_path(@conn, :show, @chan.slug, t.name)%> class="badge badge-pill badge-primary"><%= t.name %></a>
+        <% end %>
+      </h3>
+      <%= l.url %>
+    </div>
+  <% end %>
+</section>
