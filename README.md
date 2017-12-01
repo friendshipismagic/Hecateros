@@ -60,6 +60,7 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
   - [x] Répondre à un invite
   - [x] Insérer l'user qui invite comme admin du chan ←
   - [ ] Interface d'administration
+    - [ ] Publier une feature pour ExIrc pour faire des WHOIS
     - [ ] Pouvoir authentifier des admins, en ayant comme premier admin la personne qui invite le bot
       - [ ] Pouvoir rajouter des admins
     - [ ] Pouvoir ajouter / supprimer des filtres
