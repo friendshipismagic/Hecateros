@@ -52,6 +52,15 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
 - Web
   - [x] Pipeline core → web
   - [x] Gérer le tri par lien
+  - [ ] Interface d'administration
+    - [ ] Supprimer des liens
+    - [ ] Ajouter / supprimer des filtres
 - IRC
   - [x] Révision du système de modules.
-  - [ ] Pouvoir ajouter / supprimer des filtres
+  - [x] Répondre à un invite
+  - [ ] Insérer l'user qui invite comme admin du chan ←
+  - [ ] Interface d'administration
+    - [ ] Pouvoir authentifier des admins, en ayant comme premier admin la personne qui invite le bot
+      - [ ] Pouvoir rajouter des admins
+    - [ ] Pouvoir ajouter / supprimer des filtres
+
