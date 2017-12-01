@@ -58,7 +58,7 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
 - IRC
   - [x] Révision du système de modules.
   - [x] Répondre à un invite
-  - [ ] Insérer l'user qui invite comme admin du chan ←
+  - [x] Insérer l'user qui invite comme admin du chan ←
   - [ ] Interface d'administration
     - [ ] Pouvoir authentifier des admins, en ayant comme premier admin la personne qui invite le bot
       - [ ] Pouvoir rajouter des admins

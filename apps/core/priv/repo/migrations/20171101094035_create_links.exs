@@ -4,7 +4,7 @@ defmodule Core.Repo.Migrations.CreateLinks do
   def change do
     create table(:links) do
       add :url, :string, null: false
-      add :chan_id, references(:chans, on_delete: :nothing, type: :uuid)
+      add :chan_id, references(:chans, on_delete: :nothing)
       add :title, :string
 
       timestamps()

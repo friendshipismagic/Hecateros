@@ -51,6 +51,17 @@ defmodule IRC.ConnectionHandler do
     {:noreply, state}
   end
 
+  # sender → :host, :nick, :user
+  def handle_info({:invited, user, chan}, state) do
+    IRC.join_channel([chan: chan, user: user, client: state.client])
+    {:noreply, state}
+  end
+
+  def handle_call(:dump, _from, state) do
+    Logger.info (inspect state)
+    {:reply, state, state}
+  end
+
   def handle_info(message, state) do
     Logger.debug "[Message] #{inspect(message)}"
     {:noreply, state}

@@ -1,9 +1,7 @@
 defmodule Core.Link do
   use Ecto.Schema
-  alias __MODULE__
-  alias Core.Tag
   import Ecto.Changeset
-  alias Core.Repo
+  alias Core.{Tag,Repo,Link}
   require Logger
 
   schema "links" do

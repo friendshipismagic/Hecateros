@@ -9,4 +9,4 @@ config :irc, IRC.State,
   port: 6667, 
   tls?: false,
   username: "Hecateros",
-  channels: ["#Ekta-bots"]
+  channels: []
