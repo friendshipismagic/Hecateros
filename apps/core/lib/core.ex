@@ -62,5 +62,5 @@ defmodule Core do
     Logger.debug("[TRACE] "<> inspect(x))
     x
   end
-  defp create_slug(), do: Ecto.UUID.generate |> String.split("-") |> hd
+  def create_slug(), do: Ecto.UUID.generate |> String.split("-") |> hd
 end
