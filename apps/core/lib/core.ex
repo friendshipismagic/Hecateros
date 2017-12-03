@@ -44,7 +44,7 @@ defmodule Core do
   end
 
   def gib_slug(channel, username) do
-    with %Chan{} = channel <- Repo.one(from c in Chan, where: like(c.name, ^"#{channel}")),
+    with %Chan{} = channel <- Repo.one(from c in Chan, where: like(c.name, ^"#{channel}"), limit: 1),
          admins <- Repo.preload(channel, :admins) |> Map.get(:admins),
          true <- Enum.any?(admins, fn a -> a.nick == username end) do
         {:ok, channel.slug}
