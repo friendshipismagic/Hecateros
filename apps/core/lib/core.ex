@@ -6,9 +6,7 @@ defmodule Core do
   import Ecto.Query
 
   def get_links({:chan, slug}) do
-    Chan
-    |> Repo.get_by(slug: slug)
-    |> Repo.preload([links: [:tags]])
+    Repo.one(from c in Chan, where: c.slug == ^slug, order_by: [desc: :inserted_at], limit: 1, preload: [links: [:tags]])
   end
 
   def insert_link(%{chan: chan_name, tags: tags, url: url, title: title}) do

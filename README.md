@@ -60,7 +60,8 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
 - IRC
   - [x] Révision du système de modules.
   - [x] Répondre à un invite
-  - [x] Insérer l'user qui invite comme admin du chan ←
+  - [x] Insérer l'user qui invite comme admin du chan
+  - [ ] N'afficher la bannière d'admin qu'une seule fois par admin.
   - [ ] Interface d'administration
     0. [x] Récupérer depuis IRC l'URL du chan
     1. [ ] Publier une feature pour ExIrc pour faire des WHOIS
