@@ -27,6 +27,7 @@ defmodule IRC.Mixfile do
   defp deps do
     [
       {:core, in_umbrella: true},
+      {:web,  in_umbrella: true},
       {:exirc, "~> 1.0.1"},
       {:gen_stage, "~> 0.12.2"},
     ]

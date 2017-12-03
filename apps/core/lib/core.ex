@@ -13,8 +13,8 @@ defmodule Core do
 
   def insert_link(%{chan: chan_name, tags: tags, url: url, title: title}) do
     case create_chan(%{name: chan_name, slug: create_slug()}) do
-      %Chan{}=chan -> create_link %{chan: chan, tags: tags, url: url, title: title}
       {:ok, chan}  -> create_link %{chan: chan, tags: tags, url: url, title: title}
+      %Chan{}=chan -> create_link %{chan: chan, tags: tags, url: url, title: title}
     end
   end
 
@@ -43,6 +43,20 @@ defmodule Core do
     end
   end
 
+  def gib_slug(channel, username) do
+    with %Chan{} = channel <- Repo.one(from c in Chan, where: like(c.name, ^"#{channel}")),
+         admins <- Repo.preload(channel, :admins) |> Map.get(:admins),
+         true <- Enum.any?(admins, fn a -> a.nick == username end) do
+        {:ok, channel.slug}
+    else
+      nil   -> {:error, :nochan}
+      false -> {:error, :noadmin}
+    end
+  end
+
+
+  # Helpers
+
   defp check_duplicate({:url, url, chan}) do
     Logger.debug "Wondering if #{url} in #{chan} already exists…"
     query = from c in Chan, join: l in Link, where: c.name == ^chan and l.url == ^url and c.id == l.chan_id, select: l
@@ -55,6 +69,8 @@ defmodule Core do
     end
   end
 
+  def create_slug(), do: Ecto.UUID.generate |> String.split("-") |> hd
+
   defp pack({:ok, x}), do: {:ok, x}
   defp pack(x),        do: {:ok, x}
 
@@ -62,5 +78,4 @@ defmodule Core do
     Logger.debug("[TRACE] "<> inspect(x))
     x
   end
-  def create_slug(), do: Ecto.UUID.generate |> String.split("-") |> hd
 end

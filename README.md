@@ -48,11 +48,13 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
   - [x] Changesets des schémas
   - [x] Normalisation des tags / canaux (majuscule)
   - [x] Pipeline irc → core
-  - [ ] Mise à jour des tags par repost du même lien
+  - [ ] 
+  - [ ] update des tags associés à un lien si repost en moins de 30s
 - Web
   - [x] Pipeline core → web
   - [x] Gérer le tri par lien
   - [ ] Interface d'administration
+    - [ ] Récupérer un lien d'admin depuis IRC (URL + hash unique qui expire ? TOTP (that'd be fun.) ?)
     - [ ] Supprimer des liens
     - [ ] Ajouter / supprimer des filtres
 - IRC
@@ -60,8 +62,10 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
   - [x] Répondre à un invite
   - [x] Insérer l'user qui invite comme admin du chan ←
   - [ ] Interface d'administration
-    - [ ] Publier une feature pour ExIrc pour faire des WHOIS
-    - [ ] Pouvoir authentifier des admins, en ayant comme premier admin la personne qui invite le bot
-      - [ ] Pouvoir rajouter des admins
-    - [ ] Pouvoir ajouter / supprimer des filtres
+    0. [x] Récupérer depuis IRC l'URL du chan
+    1. [ ] Publier une feature pour ExIrc pour faire des WHOIS
+    2. [ ] Pouvoir authentifier des admins, en ayant comme premier admin la personne qui invite le bot
+    3. [ ] Pouvoir rajouter des admins
+    4. [ ] Pouvoir ajouter / supprimer des filtres
+  - [ ] Remplacer le champs "nick" de l'Admin par "username"
 

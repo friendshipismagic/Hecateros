@@ -31,9 +31,17 @@ defmodule IRC do
               ]
   end
 
-  def join_channel(params) do
-    ExIrc.Client.join(params[:client], params[:chan])
-    add_admin(params[:chan], params[:user].nick)
+  def join_channel(%{chan: chan_name, user: user, client: client}) do
+    Core.create_chan(%{name: chan_name, slug: Core.create_slug()})
+    ExIrc.Client.join(client, chan_name)
+    add_admin(chan_name, user.nick)
+    banner = File.read!("priv/new_chan_admin.txt")
+             |> String.replace("\n\n", "\n \n") 
+             |> String.split("\n")
+
+    Enum.each(banner, fn msg -> 
+      ExIrc.Client.msg(client, :privmsg, user.nick, msg)
+    end)
   end
 
   def add_admin(chan_name, user) do

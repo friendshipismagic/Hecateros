@@ -1,7 +1,7 @@
 defmodule IRC.ConnectionHandler do
   use GenServer
   require Logger
-  alias IRC.{Event,Plugins,State}
+  alias IRC.{Event,Plugins,State, Admin}
 
   def start_link(%State{}=state) do
     GenServer.start_link __MODULE__, state, name: __MODULE__
@@ -41,8 +41,9 @@ defmodule IRC.ConnectionHandler do
     {:noreply, state}
   end
 
-  def handle_info({:received, _message, _sender}, state) do
-    Logger.warn "I don't take personal requests."
+  def handle_info({:received, message, sender}, state) do
+    msg = Admin.parse(message, sender.nick)
+    ExIrc.Client.msg(state.client, :privmsg, sender.nick, msg)
     {:noreply, state}
   end
 
@@ -53,18 +54,18 @@ defmodule IRC.ConnectionHandler do
 
   # sender → :host, :nick, :user
   def handle_info({:invited, user, chan}, state) do
-    IRC.join_channel([chan: chan, user: user, client: state.client])
+    IRC.join_channel(%{chan: chan, user: user, client: state.client})
+    {:noreply, state}
+  end
+
+  def handle_info(message, state) do
+    Logger.debug "[Message] #{inspect(message)}"
     {:noreply, state}
   end
 
   def handle_call(:dump, _from, state) do
     Logger.info (inspect state)
     {:reply, state, state}
-  end
-
-  def handle_info(message, state) do
-    Logger.debug "[Message] #{inspect(message)}"
-    {:noreply, state}
   end
 
   def terminate(reason, state) do
