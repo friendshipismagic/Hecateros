@@ -17,7 +17,7 @@ defmodule Core do
     end
   end
 
-  def create_chan(%{chan: chan_name, slug: slug}) do
+  def create_chan(%{name: chan_name, slug: slug}) do
     chan = Chan.changeset(%Chan{}, %{chan: String.downcase(chan_name), slug: slug})
     Chan
     |> Repo.get_by(name: chan_name) || Repo.insert(chan)
