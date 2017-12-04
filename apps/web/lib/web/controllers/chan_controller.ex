@@ -8,5 +8,6 @@ defmodule Web.ChanController do
              |> render("404.html")
       chan ->
         render conn, "chan.html", chan: chan
+    end
   end
 end
