@@ -18,7 +18,7 @@ defmodule Core do
   end
 
   def insert_link(%{chan: chan_name, tags: tags, url: url, title: title}) do
-    case create_chan(%{name: chan_name, slug: create_slug()}) do
+    case create_chan(%{name: String.downcase(chan_name), slug: create_slug()}) do
       {:ok, chan}  -> create_link %{chan: chan, tags: tags, url: url, title: title}
       %Chan{}=chan -> create_link %{chan: chan, tags: tags, url: url, title: title}
     end
@@ -27,7 +27,7 @@ defmodule Core do
   def create_chan(%{name: chan_name, slug: slug}) do
     chan = Chan.changeset(%Chan{}, %{name: String.downcase(chan_name), slug: slug})
     Chan
-    |> Repo.get_by(name: chan_name) || Repo.insert(chan)
+    |> Repo.get_by(name: String.downcase(chan_name)) || Repo.insert(chan)
     |> trace
     |> pack
   end
