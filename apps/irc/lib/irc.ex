@@ -46,7 +46,7 @@ defmodule IRC do
   end
 
   def add_admin(chan_name, user) do
-    chan = Repo.get_by(Chan, name: chan_name)
+    chan = Repo.get_by(Chan, name: String.downcase(chan_name))
     if chan do
       chan
       |> Repo.preload(:admins)
