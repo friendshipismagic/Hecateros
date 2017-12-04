@@ -6,6 +6,8 @@
 * [Configuration](#configuration)
 * [TODO](#todo)
 
+AVERTISSEMENT: En l'état, ce programme est tout sauf prêt à être utilisé de façon pérenne. Chaque commit va changer un comportement, fixer un bug et en
+introduire d'autres. BEWARE.
 
 Hécatéros repose sur un canal IRC et récupère les liens qui y sont posté. Il affiche une interface web pour les parcourir.
 
