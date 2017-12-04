@@ -33,7 +33,7 @@ defmodule IRC do
   def join_channel(%{chan: chan_name, user: user, client: client}) do
     Core.create_chan(%{name: chan_name, slug: Core.create_slug()})
     ExIrc.Client.join(client, chan_name)
-    :timer.sleep 500
+    :timer.sleep 5000
     add_admin(chan_name, user.nick)
     banner = File.read!("priv/new_chan_admin.txt")
              |> String.replace("\n\n", "\n \n") 
@@ -45,10 +45,14 @@ defmodule IRC do
   end
 
   def add_admin(chan_name, user) do
-    Chan
-    |> Repo.get_by(name: chan_name)
-    |> Repo.preload(:admins)
-    |> Chan.changeset(%{admins: [user]})
-    |> Repo.update
+    chan = Repo.get_by(Chan, name: chan_name)
+    if chan do
+      chan
+      |> Repo.preload(:admins)
+      |> Chan.changeset(%{admins: [user]})
+      |> Repo.update
+    else
+      Logger.error "nil channel! cannot add admin!"
+    end
   end
 end

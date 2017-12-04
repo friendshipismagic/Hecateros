@@ -75,7 +75,7 @@ defmodule Core do
   defp pack(x),          do: {:ok, x}
 
   defp trace(x) do
-    Logger.debug("[TRACE] "<> inspect(x))
+    Logger.info("[TRACE] "<> inspect(x))
     x
   end
 end
