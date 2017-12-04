@@ -22,8 +22,9 @@
 
     </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+
+    <footer>
+      <div>Running on version <%= Core.version %></div>
+    </footer>
   </body>
-  <footer>
-    <div>Running on version <%= Core.version %></div>
-  </footer>
 </html>
