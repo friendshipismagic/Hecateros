@@ -34,6 +34,7 @@ defmodule IRC do
     Core.create_chan(%{name: chan_name, slug: Core.create_slug()})
     ExIrc.Client.join(client, chan_name)
     add_admin(chan_name, user.nick)
+    :timer.sleep(300)
     unless is_admin?(user.nick, chan_name) do
       send_banner(client, user.nick)
     end

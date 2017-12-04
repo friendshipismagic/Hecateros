@@ -3,3 +3,8 @@ footer{
   text-align: center;
   margin-top: 2em;
 }
+
+#sidebar{
+  float: right;
+  width: 25%;
+}

@@ -1,19 +1,23 @@
-#############
-# Hecateros #
-#############
+ _   _       ~~~~=:)  _                ~~~~=:) 
+| | | | (:=~~~~      | |    (:=~~~~          
+| |_| | ___  ___ __ _| |_ ___ _ __ ___  ___ 
+|  _  |/ _ \/ __/ _` | __/ _ | '__/ _ \/ __| ~~~~=:)
+| | | |  __| (_| (_| | ||  __| | | (_) \__ \
+\_| |_/\___|\___\__,_|\__\___|_|  \___/|___/
+        (:=~~~~         (:=~~~~
+~~~~=:)         ~~~~=:)        ~~~~=:)        ~~~~=:)
 
-~~~~
 Welcome! You've summoned Hecateros on your channel, which makes you
 the proud administrator of this bot on this channel.
-~~~~
 
-* You've been registered as this channel's admin, and you will be
-able to accomplish administration tasks, provided that you are well indentified
-to NickServ.
-* Your nickname doesn't matter, only your account's name.
+Public commands
+--------------
+- help <top>
+    If available, displays a help message about the specified topic.
+    You may list them by simply typing `help`.
 
-#### Commands
+Administrator commands
+----------------------
 
-→ "url <channel>"   to ask the bot the channel's URL.
-→ "leave <channel>" to make the bot leave for good.
-→ "help filters"    to display the help message for the filters.
+- url <#channel> 
+    Returns the URL of the specified channel.

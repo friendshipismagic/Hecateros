@@ -1,4 +1,15 @@
 <h2>Links for <%= link(@chan.name, to: chan_path(@conn, :show, @chan.slug)) %></h2>
+<section id="sidebar">
+  <nav>
+    <h3>Tags</h3>
+    <ul>
+      <%= for t <- @tags do %>
+        <li><%= link(t, to: tag_path(@conn, :show, @chan.slug, t))%></li>
+      <% end %>
+    </ul>
+  </nav>
+</section>
+
 <section id="links">
   <%= for l <- @chan.links do %>
     <div class="chan">
