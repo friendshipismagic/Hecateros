@@ -2,8 +2,8 @@ defmodule Web.ChanController do
   use Web, :controller
 
   def show(conn, %{"slug" => slug}) do
-    if chan=Core.get_links({:chan, slug}) do
-      render conn, "chan.html", chan: chan
+    if Core.get_links({:chan, slug}) do
+      render conn, "chan.html", chan: Core.get_links({:chan, slug})
     else
       conn
       |> put_status(404)
