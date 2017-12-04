@@ -50,7 +50,6 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
   - [x] Changesets des schémas
   - [x] Normalisation des tags / canaux (majuscule)
   - [x] Pipeline irc → core
-  - [ ] 
   - [ ] update des tags associés à un lien si repost en moins de 30s
 - Web
   - [x] Pipeline core → web
