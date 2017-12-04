@@ -32,7 +32,7 @@
     </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
-  <foooter>
+  <footer>
     <p>Running on version <%= Core.version %></p>
-  </foooter>
+  </footer>
 </html>
