@@ -1,4 +1,4 @@
-<h2>Links for #{@chan.name}</h2>
+<h2>Links for <%=@chan.name %></h2>
 <section id="links">
   <%= for l <- @chan.links do %>
     <div class="chan">
