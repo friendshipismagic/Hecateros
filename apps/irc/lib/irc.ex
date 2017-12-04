@@ -5,6 +5,7 @@ defmodule IRC do
   alias Core.Repo
   alias Core.Chan
   import Ecto.Changeset, only: [change: 2]
+  require Logger
 
   defmodule State do
     defstruct [:client,
