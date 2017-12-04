@@ -34,6 +34,7 @@ defmodule IRC do
   def join_channel(%{chan: chan_name, user: user, client: client}) do
     Core.create_chan(%{name: chan_name, slug: Core.create_slug()})
     ExIrc.Client.join(client, chan_name)
+    :timer.sleep 500
     add_admin(chan_name, user.nick)
     banner = File.read!("priv/new_chan_admin.txt")
              |> String.replace("\n\n", "\n \n") 
