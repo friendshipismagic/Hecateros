@@ -4,7 +4,7 @@
       <h3><a href=<%= l.url%>><%= l.title %></a>
           <a href=<%= tag_path(@conn, :show, @slug, @tag)%> class="badge badge-pill badge-primary"><%= @tag %></a>
       </h3>
-      <%= l.url %>
+      <p><%= l.url %><br /><%= format_date(l.inserted_at) %></p>
     </div>
   <% end %>
 </section>

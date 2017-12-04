@@ -5,9 +5,16 @@ defmodule Core do
   require Logger
   import Ecto.Query
 
-  def get_links(slug) do
+  def get_links(:chan, slug) do
     links_query = from l in Link, order_by: [desc: :inserted_at], preload: [:tags]
     Repo.one(from c in Chan, where: c.slug == ^slug, limit: 1, preload: [links: ^links_query])
+  end
+
+  def get_links(:tag, tag, chan) do
+    query = from l in Link, where: l.chan_id == ^chan.id, order_by: l.inserted_at
+    tag
+    |> Repo.preload([links: query])
+    |> Map.get(:links)
   end
 
   def insert_link(%{chan: chan_name, tags: tags, url: url, title: title}) do
