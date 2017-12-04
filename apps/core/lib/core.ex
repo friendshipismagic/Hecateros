@@ -18,7 +18,7 @@ defmodule Core do
   end
 
   def create_chan(%{name: chan_name, slug: slug}) do
-    chan = Chan.changeset(%Chan{}, %{chan: String.downcase(chan_name), slug: slug})
+    chan = Chan.changeset(%Chan{}, %{name: String.downcase(chan_name), slug: slug})
     Chan
     |> Repo.get_by(name: chan_name) || Repo.insert(chan)
     |> trace
@@ -70,8 +70,9 @@ defmodule Core do
 
   def create_slug(), do: Ecto.UUID.generate |> String.split("-") |> hd
 
-  defp pack({:ok, x}), do: {:ok, x}
-  defp pack(x),        do: {:ok, x}
+  defp pach({:error, x}), do: {:error, x}
+  defp pack({:ok, x}),   do: {:ok, x}
+  defp pack(x),          do: {:ok, x}
 
   defp trace(x) do
     Logger.debug("[TRACE] "<> inspect(x))

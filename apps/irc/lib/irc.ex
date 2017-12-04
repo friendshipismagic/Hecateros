@@ -17,7 +17,6 @@ defmodule IRC do
                :realname,
                :tls?,
                :username,
-               :pipeline
               ]
   end
 
@@ -46,8 +45,8 @@ defmodule IRC do
   end
 
   def add_admin(chan_name, user) do
-    chan = Chan |> Repo.get_by(name: chan_name)
-    chan
+    Chan
+    |> Repo.get_by(name: chan_name)
     |> Repo.preload(:admins)
     |> Chan.changeset(%{admins: [user]})
     |> Repo.update
