@@ -5,6 +5,8 @@ defmodule Core do
   require Logger
   import Ecto.Query
 
+  @git_version System.cmd("git", ~w(describe --always --tags HEAD)) |> elem(0) |> String.replace("\n", "")
+
   def get_links(:chan, slug) do
     links_query = from l in Link, order_by: [desc: :inserted_at], preload: [:tags]
     Repo.one(from c in Chan, where: c.slug == ^slug, limit: 1, preload: [links: ^links_query])
@@ -85,4 +87,6 @@ defmodule Core do
     Logger.info("[TRACE] "<> inspect(x))
     x
   end
+
+  def version, do: @git_version
 end
