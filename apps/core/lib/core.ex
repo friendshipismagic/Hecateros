@@ -65,7 +65,7 @@ defmodule Core do
 
   defp check_duplicate({:url, url, chan}) do
     Logger.debug "Wondering if #{url} in #{chan} already exists…"
-    query = from c in Chan, join: l in Link, where: c.name == ^chan and l.url == ^url and c.id == l.chan_id, select: l
+    query = from c in Chan, join: l in Link, where: c.name == ^String.downcase(chan) and l.url == ^url and c.id == l.chan_id, select: l
     case Repo.all(query) do
       [] ->
         Logger.debug "Nope, doesn't."
