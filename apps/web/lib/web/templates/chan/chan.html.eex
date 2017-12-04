@@ -1,10 +1,10 @@
-<h2>Links for <%=@chan.name %></h2>
+<h2>Links for <%= link(@chan.name, to: chan_path(@conn, :show, @chan.slug)) %></h2>
 <section id="links">
   <%= for l <- @chan.links do %>
     <div class="chan">
-      <h3><a href=<%= l.url%>><%= l.title %></a> <%= for t <- l.tags do %>
-          <a href=<%= tag_path(@conn, :show, @chan.slug, t.name)%> class="badge badge-pill badge-primary"><%= t.name %></a>
-        <% end %>
+      <h3><%= link(l.title, to: l.url) %> <%= for t <- l.tags do %>
+            <%= link(t.name, to: tag_path(@conn, :show, @chan.slug, t.name), class: "badge badge-pill badge-primary") %>
+          <% end %>
       </h3>
       <p><%= l.url %><br /><%= format_date(l.inserted_at) %></p>
     </div>
