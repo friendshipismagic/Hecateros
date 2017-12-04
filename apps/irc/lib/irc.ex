@@ -2,9 +2,8 @@ defmodule IRC do
   @moduledoc """
   Documentation for IRC.
   """
-  alias Core.Repo
-  alias Core.Chan
-  import Ecto.Changeset, only: [change: 2]
+  alias Core.{Repo,Chan,Users}
+  import Users, only: [is_admin?: 2]
   require Logger
 
   defmodule State do
@@ -34,15 +33,10 @@ defmodule IRC do
   def join_channel(%{chan: chan_name, user: user, client: client}) do
     Core.create_chan(%{name: chan_name, slug: Core.create_slug()})
     ExIrc.Client.join(client, chan_name)
-    :timer.sleep 5000
     add_admin(chan_name, user.nick)
-    banner = File.read!("priv/new_chan_admin.txt")
-             |> String.replace("\n\n", "\n \n") 
-             |> String.split("\n")
-
-    Enum.each(banner, fn msg -> 
-      ExIrc.Client.msg(client, :privmsg, user.nick, msg)
-    end)
+    unless is_admin?(user.nick, chan_name) do
+      send_banner(client, user.nick)
+    end
   end
 
   def add_admin(chan_name, user) do
@@ -55,5 +49,15 @@ defmodule IRC do
     else
       Logger.error "nil channel! cannot add admin!"
     end
+  end
+
+  defp send_banner(client, nick) do
+    banner = File.read!("priv/new_chan_admin.txt")
+             |> String.replace("\n\n", "\n \n") 
+             |> String.split("\n")
+
+    Enum.each(banner, fn msg -> 
+      ExIrc.Client.msg(client, :privmsg, nick, msg)
+    end)
   end
 end

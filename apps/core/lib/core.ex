@@ -4,6 +4,7 @@ defmodule Core do
   alias Core.{Chan,Tag,Repo,Link}
   require Logger
   import Ecto.Query
+  import Core.Users, only: [is_admin?: 2]
 
   @git_version System.cmd("git", ~w(describe --always --tags HEAD)) |> elem(0) |> String.replace("\n", "")
 
@@ -52,16 +53,12 @@ defmodule Core do
   end
 
   def gib_slug(channel, username) do
-    with %Chan{} = channel <- Repo.one(from c in Chan, where: like(c.name, ^"#{channel}"), limit: 1),
-         admins <- Repo.preload(channel, :admins) |> Map.get(:admins),
-         true <- Enum.any?(admins, fn a -> a.nick == username end) do
-        {:ok, channel.slug}
-    else
+    case is_admin?(username, channel) do
+      true  -> {:ok, channel.slug}
       nil   -> {:error, :nochan}
       false -> {:error, :noadmin}
     end
   end
-
 
   # Helpers
 

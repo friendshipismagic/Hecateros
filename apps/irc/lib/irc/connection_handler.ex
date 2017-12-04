@@ -43,8 +43,14 @@ defmodule IRC.ConnectionHandler do
 
   def handle_info({:received, message, sender}, state) do
     case Admin.parse(message, sender.nick) do
-      {:ok, msg}  -> ExIrc.Client.msg(state.client, :privmsg, sender.nick, msg)
-      {:error, _} -> nil
+      {:error, msg}  ->
+        for m <- String.split(msg,"\n") do
+          :timer.sleep(500)
+          ExIrc.Client.msg(state.client, :privmsg, sender.nick, m)
+          :timer.sleep(2000)
+        end
+      {:ok, msg} ->
+        ExIrc.Client.msg(state.client, :privmsg, sender.nick, msg)
     end
     {:noreply, state}
   end
