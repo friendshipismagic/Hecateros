@@ -5,7 +5,7 @@ defmodule Core do
   require Logger
   import Ecto.Query
 
-  def get_links({:chan, slug}) do
+  def get_links(slug) do
     links_query = from l in Link, order_by: [desc: :inserted_at], preload: [:tags]
     Repo.one(from c in Chan, where: c.slug == ^slug, limit: 1, preload: [links: ^links_query])
   end
@@ -17,8 +17,8 @@ defmodule Core do
     end
   end
 
-  def create_chan(attributes) do
-    chan = Chan.changeset(%Chan{}, attributes)
+  def create_chan(%{chan: chan_name, slug: slug}) do
+    chan = Chan.changeset(%Chan{}, %{chan: String.downcase(chan_name), slug: slug})
     Chan
     |> Repo.get_by(name: attributes.name) || Repo.insert(chan)
     |> trace
