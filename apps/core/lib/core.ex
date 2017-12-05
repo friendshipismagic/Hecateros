@@ -6,8 +6,6 @@ defmodule Core do
   import Ecto.Query
   import Core.Users, only: [is_admin?: 2]
 
-  @git_version System.cmd("git", ~w(describe --always --tags HEAD)) |> elem(0) |> String.replace("\n", "")
-
   def get_links(:chan, slug) do
     links_query = from l in Link, order_by: [desc: :inserted_at], preload: [:tags]
     Repo.one(from c in Chan, where: c.slug == ^slug, limit: 1, preload: [links: ^links_query])
@@ -54,7 +52,9 @@ defmodule Core do
 
   def gib_slug(channel, username) do
     case is_admin?(username, channel) do
-      true  -> {:ok, channel.slug}
+      true  ->
+        [slug] = Repo.all from c in Chan, where: c.name == "#ekta", select: c.slug
+        {:ok, slug}
       nil   -> {:error, :nochan}
       false -> {:error, :noadmin}
     end
@@ -64,12 +64,15 @@ defmodule Core do
 
   defp check_duplicate({:url, url, chan}) do
     Logger.debug "Wondering if #{url} in #{chan} already exists…"
-    query = from c in Chan, join: l in Link, where: c.name == ^String.downcase(chan) and l.url == ^url and c.id == l.chan_id, select: l
+    query = from c in Chan, join: l in Link,
+                            where: c.name == ^String.downcase(chan)
+                            and l.url == ^url and c.id == l.chan_id,
+                            select: l
     case Repo.all(query) do
       [] ->
         Logger.debug "Nope, doesn't."
         :ok 
-      [link] ->
+      [_link] ->
         :duplicate
     end
   end
@@ -85,5 +88,5 @@ defmodule Core do
     x
   end
 
-  def version, do: @git_version
+  def version, do: System.cmd("git", ~w(describe --always --tags HEAD)) |> elem(0) |> String.replace("\n", "")
 end
