@@ -4,23 +4,37 @@ defmodule IRC.Plugins.Title do
   @headers [{"Accept", "text/html"}]
 
   def get_title(url) do
-    with :ok          <- check(url),
-         {:ok, body}  <- fetch(url),
-         {:ok, title} <- parse(body) do
+    with {:ok, new_url} <- check(url),
+         {:ok, body}    <- fetch(new_url),
+         {:ok, title}   <- parse(body) do
            {:ok, title}
     else
       error -> error
     end
   end
-  
-  def check(url) do
-    url = url
-    response = HTTPoison.head!(url, @headers)
-    [{"Content-Type", content}] = Enum.filter response.headers, fn {name, _value} -> name == "Content-Type" end
-    if content =~ "text/html" do
-      :ok
+
+  def check(url, redirects \\ 0)
+  def check(url, 3), do: {:error, "Too many redirections"}
+  def check(url, redirects) do
+    r = HTTPoison.head!(url, @headers)
+    case moved_in(r) do
+      {:moved, new_url} -> check(new_url, redirects + 1)
+      {:stay,  url}     ->
+        [{"Content-Type", content}] = Enum.filter r.headers, fn {k,_} -> k == "Content-Type" end
+        if content =~ "text/html" do
+          {:ok, url}
+        else
+          {:error, "Not an HTML page"}
+        end
+    end
+  end
+
+  def moved_in(%HTTPoison.Response{}=r) do
+    if r.status_code in [301,302] do
+      [{"Location", url}] = Enum.filter(r.headers, fn {k,_} -> k == "Location" end)
+      {:moved, url}
     else
-      {:error, "Not an HTML page"}
+      {:stay, r.request_url}
     end
   end
 
