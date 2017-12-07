@@ -44,6 +44,11 @@ Les fichiers de configuration se situent dans le dossier `config/` à la racine 
 Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un prefix de protocol, ou d'empêcher certains liens
 (sourcer un fichier de blacklist ?). Ces options-là seront également fournies au runtime par les fonctions appropriées.
 
+## Déploiement
+
+Un dossier `deploy` fourni un playbook Ansible avec le template et les fichiers de configuration utilisés. Le fichier `hosts` utilisé doit exporter la
+variable `public_inteface` qui correspond à l'adresse sur laquelle Nginx va écouter.
+
 ## TODO
 
 - Core

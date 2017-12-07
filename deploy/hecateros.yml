@@ -1,0 +1,29 @@
+---
+- hosts: kratom
+  remote_user: root
+  tasks:
+    - name: Installer Nginx
+      pkgng: name=nginx state=present
+
+    - name: Pré-configuration
+      file: path=/usr/local/etc/nginx/sites-enabled state=directory
+    - file: path=/usr/local/etc/nginx/sites-available state=directory
+
+    - name: Configurer Nginx
+      copy: src=files/nginx.conf  dest=/usr/local/etc/nginx/nginx.conf
+    - copy: src=files/dhparam.pem dest=/usr/local/etc/nginx/dhparam.pem
+    - copy: src=files/mime_types  dest=/usr/local/etc/nginx/mime_types
+
+    - name: Configurer Hecateros
+      template: src=hecateros.j2 dest=/usr/local/etc/nginx/sites-available/hecateros
+    - file: src=/usr/local/etc/nginx/sites-available/hecateros dest=/usr/local/etc/nginx/sites-enabled/hecateros state=link
+      notify:
+        - restart nginx
+
+    - name: Vérifier que Nginx est bien démarré
+      service: name=nginx state=started enabled=yes
+
+  handlers:
+  - name: restart nginx
+    service: name=nginx state=restarted
+
