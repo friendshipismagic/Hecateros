@@ -1,12 +1,11 @@
 use Mix.Config
 
 config :irc, IRC.State,
-  host: "127.0.0.1",
+  host: "localhost",
   realname: "Ἑκάτερος",
-  nickname: "Hecateros",
+  nickname: "Hecaiesis",
   pass: "",
-  port: 6667,
-  tls?: false,
+  port: 6767,
+  tls?: true,
   username: "Hecateros",
   channels: []
-
