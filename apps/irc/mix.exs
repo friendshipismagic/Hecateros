@@ -28,7 +28,7 @@ defmodule IRC.Mixfile do
     [
       {:core, in_umbrella: true},
       {:web,  in_umbrella: true},
-      {:exirc, "~> 1.0.1"},
+      {:exirc, github: "tchoutri/exirc", branch: "add-whois"},
       {:gen_stage, "~> 0.12.2"},
     ]
   end
