@@ -13,7 +13,7 @@
 
 <section id="links">
   <%= for l <- @chan.links do %>
-    <div class="chan">
+    <div>
       <h3><%= link(l.title, to: l.url) %> <%= for t <- l.tags do %>
             <%= link(t.name, to: tag_path(@conn, :show, @chan.slug, t.name), class: "badge badge-pill badge-primary") %>
           <% end %>

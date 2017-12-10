@@ -1,4 +1,8 @@
 /* This file is for your main application css. */
+main{
+  font-size: large;
+}
+
 footer{
   text-align: center;
   margin-top: 2em;
