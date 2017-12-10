@@ -1,7 +1,7 @@
 defmodule IRC.ConnectionHandler do
   use GenServer
   require Logger
-  alias IRC.{Event,Plugins,State, Admin}
+  alias IRC.{Event,Plugins,State, Messages}
 
   def start_link(%State{}=state) do
     GenServer.start_link __MODULE__, state, name: __MODULE__
@@ -41,7 +41,7 @@ defmodule IRC.ConnectionHandler do
   end
 
   def handle_info({:received, message, sender}, state) do
-    case Admin.parse(message, sender.nick) do
+    case Messages.parse(message, sender.nick) do
       {:error, msg}  ->
         for m <- String.split(msg,"\n") do
           :timer.sleep(500)

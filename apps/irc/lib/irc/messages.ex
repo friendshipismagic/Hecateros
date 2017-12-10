@@ -7,7 +7,7 @@ defmodule IRC.Messages do
   def parse("url " <> channel, username) do
     with {:ok, :authed} <- Auth.check_auth(username),
          {:ok, :admin}  <- Auth.check_admin(username, channel),
-         {:ok, url}    <- Core.gib_slug(channel) do
+         {:ok, url}    <- Core.gib_slug(channel, username) do
            {:ok, url}
     else
       {:error, :nochan}  -> {:error, "Bien essayé, tocard…"}

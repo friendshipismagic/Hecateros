@@ -75,7 +75,7 @@ defmodule Core do
 
   def create_slug(), do: Ecto.UUID.generate |> String.split("-") |> hd
 
-  defp pach({:error, x}), do: {:error, x}
+  defp pack({:error, x}), do: {:error, x}
   defp pack({:ok, x}),   do: {:ok, x}
   defp pack(x),          do: {:ok, x}
 

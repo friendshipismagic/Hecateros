@@ -3,7 +3,7 @@ defmodule IRC.Auth do
 
   def check_auth(nickname) do
     client = GenServer.call(IRC.ConnectionHandler, :client)
-    user = ExIrc.Client.whois!(client, nickname)
+    user = ExIrc.Client.whois(client, nickname)
     if user.account_name, do: {:ok, :authed}, else: {:error, :unauthed}
   end
 
