@@ -3,6 +3,10 @@ main{
   font-size: large;
 }
 
+#tags{
+  font-size: x-large;
+}
+
 footer{
   text-align: center;
   margin-top: 2em;
