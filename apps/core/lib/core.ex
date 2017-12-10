@@ -4,7 +4,7 @@ defmodule Core do
   alias Core.{Chan,Tag,Repo,Link}
   require Logger
   import Ecto.Query
-  import Core.Users, only: [is_admin?: 2]
+  import Core.Users, only: [check_admin: 2]
 
   def get_links(:chan, slug) do
     links_query = from l in Link, order_by: [desc: :inserted_at], preload: [:tags]
@@ -51,13 +51,9 @@ defmodule Core do
   end
 
   def gib_slug(channel, username) do
-    case is_admin?(username, channel) do
-      true  ->
-        [slug] = Repo.all from c in Chan, where: c.name == "#ekta", select: c.slug
-        {:ok, slug}
-      nil   -> {:error, :nochan}
-      false -> {:error, :noadmin}
-    end
+    [slug] = Repo.all from c in Chan, where: c.name == "#ekta",
+                                      select: c.slug
+    {:ok, Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)}
   end
 
   # Helpers

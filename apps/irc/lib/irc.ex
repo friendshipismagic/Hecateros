@@ -3,7 +3,7 @@ defmodule IRC do
   Documentation for IRC.
   """
   alias Core.{Repo,Chan,Users}
-  import Users, only: [is_admin?: 2]
+  import Users, only: [check_admin: 2]
   require Logger
 
   defmodule State do
@@ -35,7 +35,7 @@ defmodule IRC do
     ExIrc.Client.join(client, chan_name)
     add_admin(chan_name, user.nick)
     :timer.sleep(300)
-    unless is_admin?(user.nick, chan_name) do
+    unless check_admin(user.nick, chan_name) do
       send_banner(client, user.nick)
     end
   end

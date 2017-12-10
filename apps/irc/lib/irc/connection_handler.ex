@@ -8,7 +8,6 @@ defmodule IRC.ConnectionHandler do
   end
 
   def init(state) do
-    Logger.debug("[State dump] " <> inspect state)
     ExIrc.Client.add_handler(state.client, self())
     if state.tls? do
       ExIrc.Client.connect_ssl!(state.client, state.host, state.port)
@@ -74,6 +73,10 @@ defmodule IRC.ConnectionHandler do
   def handle_call(:dump, _from, state) do
     Logger.info (inspect state)
     {:reply, state, state}
+  end
+
+  def handle_call(:client, _from, state) do
+    {:reply, state.client, state}
   end
 
   def terminate(reason, state) do
