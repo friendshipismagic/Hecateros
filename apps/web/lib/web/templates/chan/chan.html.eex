@@ -1,4 +1,4 @@
-<section id="sidebar">
+<div id="sidebar">
   <nav>
     <h3>Tags</h3>
     <ul>
@@ -7,11 +7,11 @@
       <% end %>
     </ul>
   </nav>
-</section>
+</div>
 
 <h2>Links for <%= link(@chan.name, to: chan_path(@conn, :show, @chan.slug)) %></h2>
 
-<section id="links">
+<div id="links">
   <%= for l <- @chan.links do %>
     <div>
       <h3><%= link(l.title, to: l.url) %> <%= for t <- l.tags do %>
@@ -21,4 +21,4 @@
       <p><%= l.url %><br /><%= format_date(l.inserted_at) %></p>
     </div>
   <% end %>
-</section>
+</div>
