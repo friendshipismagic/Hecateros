@@ -8,7 +8,13 @@ footer{
   margin-top: 2em;
 }
 
+#links{
+  display: inline-block;
+  width: calc(100% - 300px);
+}
+
 #sidebar{
+  display: inline-block;
   float: right;
-  width: 25%;
+  width: 100px;
 }
