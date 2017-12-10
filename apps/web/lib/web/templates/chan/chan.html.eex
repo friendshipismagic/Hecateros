@@ -1,4 +1,3 @@
-<h2>Links for <%= link(@chan.name, to: chan_path(@conn, :show, @chan.slug)) %></h2>
 <section id="sidebar">
   <nav>
     <h3>Tags</h3>
@@ -9,6 +8,8 @@
     </ul>
   </nav>
 </section>
+
+<h2>Links for <%= link(@chan.name, to: chan_path(@conn, :show, @chan.slug)) %></h2>
 
 <section id="links">
   <%= for l <- @chan.links do %>
