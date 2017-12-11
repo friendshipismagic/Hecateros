@@ -54,6 +54,5 @@ variable `public_inteface` qui correspond à l'adresse sur laquelle Nginx va éc
 - Core
   - [ ] update des tags associés à un lien si repost en moins de 30s
 - IRC
-  - [ ] Publier une feature pour ExIrc pour faire des WHOIS
   - [ ] Remplacer le champs "nick" de l'Admin par "username"
 
