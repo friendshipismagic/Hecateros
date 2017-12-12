@@ -1,1 +1,1 @@
-dev-rezosup.exs
+dev-localhost.exs

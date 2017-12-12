@@ -1,7 +1,7 @@
 defmodule IRC.ConnectionHandler do
   use GenServer
   require Logger
-  alias IRC.{Event,Plugins,State, Messages}
+  alias IRC.{Event,State}
 
   def start_link(%State{}=state) do
     GenServer.start_link __MODULE__, state, name: __MODULE__
@@ -41,27 +41,19 @@ defmodule IRC.ConnectionHandler do
   end
 
   def handle_info({:received, message, sender}, state) do
-    case Messages.parse(message, sender.nick) do
-      {:error, msg}  ->
-        for m <- String.split(msg,"\n") do
-          :timer.sleep(500)
-          ExIrc.Client.msg(state.client, :privmsg, sender.nick, m)
-          :timer.sleep(2000)
-        end
-      {:ok, msg} ->
-        ExIrc.Client.msg(state.client, :privmsg, sender.nick, msg)
-    end
+    IRC.EventHandler.notify(:private, %Event{message: message, sender: sender, client: state.client})
     {:noreply, state}
   end
 
   def handle_info({:received, message, sender, chan}, state) do
-    IRC.EventHandler.notify(%Event{message: message, sender: sender, chan: chan})
+    IRC.EventHandler.notify(:public, %Event{message: message, sender: sender, chan: chan, client: state.client})
     {:noreply, state}
   end
 
-  # sender → :host, :nick, :user
+  # sender = %{:host, :nick, :user}
   def handle_info({:invited, user, chan}, state) do
-    IRC.join_channel(%{chan: chan, user: user, client: state.client})
+    Logger.debug "Invited in #{chan} by #{user.nick}"
+    IRC.EventHandler.notify(:invited, %Event{sender: user.nick, chan: chan, client: state.client})
     {:noreply, state}
   end
 

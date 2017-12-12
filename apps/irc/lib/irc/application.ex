@@ -9,11 +9,16 @@ defmodule IRC.Application do
     {:ok, client} = ExIrc.start_link!
     state = struct(IRC.State, (conf ++ [client: client]))
 
+    plugins = [
+      IRC.Plugins.Links,
+      IRC.Plugins.Admin,
+      IRC.Plugins.Channel
+    ]
+
     children = [
       {IRC.ConnectionHandler, state}, # 1) This one receives the IRC message
       IRC.EventHandler,               # 2) And this one dispatches the messages to the plugins.
-      IRC.Plugins.Links
-    ]
+    ] ++ plugins
 
     opts = [strategy: :one_for_one, name: IRC.Supervisor]
     Supervisor.start_link(children, opts)

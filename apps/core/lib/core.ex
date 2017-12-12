@@ -50,8 +50,8 @@ defmodule Core do
     end
   end
 
-  def gib_slug(channel, username) do
-    [slug] = Repo.all from c in Chan, where: c.name == "#ekta",
+  def gib_slug(channel) do
+    [slug] = Repo.all from c in Chan, where: c.name == ^channel,
                                       select: c.slug
     {:ok, Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)}
   end

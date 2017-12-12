@@ -1,7 +1,7 @@
 defmodule IRC.Plugins.Links do
-  use GenServer
-  require Logger
   alias IRC.{Plugins, EventHandler, Event}
+  require Logger
+  use GenServer
 
 
   def start_link(_) do
@@ -9,23 +9,23 @@ defmodule IRC.Plugins.Links do
   end
 
   def init(:ok) do
-    EventHandler.subscribe
+    EventHandler.subscribe(:public)
   end
 
-  def handle_cast({:irc, %Event{}=message}, state) do
-    message
+  def handle_cast({:public, %Event{}=event}, state) do
+    event
     |> parse
     |> insert
     {:noreply, state}
   end
 
-  def parse(struct) do
-    with {:ok, url}     <- parse_url(struct.message),
+  def parse(event) do
+    with {:ok, url}     <- parse_url(event.message),
          {:ok, new_url} <- check(url),
-         {:ok, taglist} <- parse_tags(struct.message),
+         {:ok, taglist} <- parse_tags(event.message),
          {:ok, title}   <- Plugins.Title.get_title(new_url),
-         chan           <- String.downcase(struct.chan) do
-           {:ok, %{struct|tags: taglist, url: new_url,chan: chan, title: title}}
+         chan           <- String.downcase(event.chan) do
+           {:ok, %{event|tags: taglist, url: new_url,chan: chan, title: title}}
     else
       {:error, :nolink} -> :error
       {:error, :notag}  -> :error
