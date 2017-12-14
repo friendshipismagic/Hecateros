@@ -64,7 +64,7 @@ defmodule IRC.Plugins.Admin do
   end
   
   def check_auth(username, client) do
-    # user = ExIrc.Client.whois(client, username)
+    user = ExIrc.Client.whois(client, username)
     if user.account_name, do: {:ok, :authed, user.account_name}, else: {:error, :unauthed}
   end
 end
