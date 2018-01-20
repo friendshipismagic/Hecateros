@@ -8,11 +8,11 @@ defmodule IRC.ConnectionHandler do
   end
 
   def init(state) do
-    ExIrc.Client.add_handler(state.client, self())
-    if state.tls? do
-      ExIrc.Client.connect_ssl!(state.client, state.host, state.port)
+    ExIRC.Client.add_handler(state.client, self())
+    if state.ssl? do
+      ExIRC.Client.connect_ssl!(state.client, state.host, state.port)
     else
-      ExIrc.Client.connect!(state.client, state.host, state.port)
+      ExIRC.Client.connect!(state.client, state.host, state.port)
     end
     Logger.info(IO.ANSI.green() <> "IRC Application started!" <> IO.ANSI.reset())
     {:ok, state}
@@ -21,7 +21,7 @@ defmodule IRC.ConnectionHandler do
   def handle_info({:connected, _server, _port}, state) do
     Logger.info(IO.ANSI.green() <> "Establishing connection to #{state.host}" <> IO.ANSI.reset())
     
-    ExIrc.Client.logon state.client, state.pass, state.nickname, state.username, state.realname
+    ExIRC.Client.logon state.client, state.pass, state.nickname, state.username, state.realname
     {:noreply, state}
   end
 
@@ -35,7 +35,7 @@ defmodule IRC.ConnectionHandler do
     Logger.debug "Joining " <> Enum.join(state.channels, ", ")
     case state.channels do
       [] -> nil
-       _ -> Enum.each(state.channels, &ExIrc.Client.join(state.client, &1))
+       _ -> Enum.each(state.channels, &ExIRC.Client.join(state.client, &1))
     end
     {:noreply, state}
   end
@@ -57,6 +57,12 @@ defmodule IRC.ConnectionHandler do
     {:noreply, state}
   end
 
+  def handle_info({:whois, whois}, state) do
+    Logger.debug "[Whois] " <> inspect(whois)
+    IRC.EventHandler.notify(:whois, whois)
+    {:noreply, state}
+  end
+
   def handle_info(message, state) do
     Logger.debug "[Message] #{inspect(message)}"
     {:noreply, state}
@@ -73,7 +79,7 @@ defmodule IRC.ConnectionHandler do
 
   def terminate(reason, state) do
     Logger.info "[TERMINATE] #{inspect(reason)}"
-    ExIrc.Client.stop!(state.client)
+    ExIRC.Client.stop!(state.client)
     reason
   end
 end

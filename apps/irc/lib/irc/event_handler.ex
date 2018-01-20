@@ -12,7 +12,7 @@ defmodule IRC.EventHandler do
     {:ok, :ok}
   end
 
-  def notify(topic, %Event{}=event) when is_atom(topic) do
+  def notify(topic, event) when is_atom(topic) do
     Registry.dispatch(__MODULE__, topic, fn entries ->
       for {pid, _} <- entries, do: GenServer.cast(pid, {topic, event})
     end)

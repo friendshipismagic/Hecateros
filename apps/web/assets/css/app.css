@@ -22,3 +22,13 @@ footer{
   float: right;
   width: 100px;
 }
+
+footer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  left: 0;
+  text-align: center;
+}
+

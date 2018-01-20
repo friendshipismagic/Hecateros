@@ -6,13 +6,14 @@ defmodule IRC.Application do
 
   def start(_type, _args) do
     conf  = Application.get_env(:irc, IRC.State)
-    {:ok, client} = ExIrc.start_link!
+    {:ok, client} = ExIRC.start_link!
     state = struct(IRC.State, (conf ++ [client: client]))
 
     plugins = [
-      IRC.Plugins.Links,
       IRC.Plugins.Admin,
-      IRC.Plugins.Channel
+      IRC.Plugins.Channel,
+      IRC.Plugins.Links,
+      IRC.Plugins.Whois
     ]
 
     children = [

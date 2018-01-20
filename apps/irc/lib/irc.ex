@@ -12,7 +12,7 @@ defmodule IRC do
                :pass,
                :port,
                :realname,
-               :tls?,
+               :ssl?,
                :username,
               ]
   end

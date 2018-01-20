@@ -28,8 +28,7 @@ defmodule IRC.Mixfile do
     [
       {:core, in_umbrella: true},
       {:web,  in_umbrella: true},
-      {:exirc, github: "bitwalker/exirc", branch: "master"},
-      {:gen_stage, "~> 0.12.2"},
+      {:exirc, path: "../../../exirc"}
     ]
   end
 end

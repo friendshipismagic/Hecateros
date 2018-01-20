@@ -50,10 +50,11 @@ defmodule Core do
     end
   end
 
+  @spec gib_slug(String.t) :: {:ok, String.t}
   def gib_slug(channel) do
     [slug] = Repo.all from c in Chan, where: c.name == ^channel,
                                       select: c.slug
-    {:ok, Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)}
+    {:ok, slug}
   end
 
   # Helpers

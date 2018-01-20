@@ -10,12 +10,13 @@ defmodule IRC.Plugins.Channel do
 
   def init(:ok) do
     EventHandler.subscribe(:invited)
+    {:ok, :ok}
   end
 
   def handle_cast({:invited, %Event{}=event}, state) do
     Logger.debug "Received broadcasted invitation"
     Core.create_chan(%{name: event.chan, slug: Core.create_slug()})
-    ExIrc.Client.join(event.client, event.chan)
+    ExIRC.Client.join(event.client, event.chan)
     unless Core.Users.check_admin(event.sender, event.chan) do
       send_banner(event.client, event.sender)
     end
@@ -29,7 +30,7 @@ defmodule IRC.Plugins.Channel do
              |> String.split("\n")
 
     Enum.each(banner, fn msg -> 
-      ExIrc.Client.msg(client, :privmsg, nick, msg)
+      ExIRC.Client.msg(client, :privmsg, nick, msg)
     end)
   end
 end

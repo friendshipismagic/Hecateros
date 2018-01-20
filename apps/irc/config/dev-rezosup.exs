@@ -9,7 +9,7 @@ config :irc, IRC.State,
   nickname: "Hecaiesis",
   pass: "",
   port: 6767,
-  tls?: true,
+  ssl?: true,
   username: "Hecateros",
   channels: []
 

@@ -30,7 +30,6 @@ defmodule Core.Mixfile do
       {:hashids, "~> 2.0.4"},
       {:httpoison, "~> 0.13.0"},
       {:sqlite_ecto2, "~> 2.2.2"},
-      {:web, in_umbrella: true}
     ]
   end
 end

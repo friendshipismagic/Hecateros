@@ -12,13 +12,19 @@
 </section>
 
 <section id="links">
-  <%= for l <- @chan.links do %>
-    <div>
-      <h3><%= link(l.title, to: l.url) %> <%= for t <- l.tags do %>
-            <%= link(t.name, to: tag_path(@conn, :show, @chan.slug, t.name), class: "badge badge-pill badge-primary") %>
-          <% end %>
-      </h3>
-      <p><%= l.url %><br /><%= format_date(l.inserted_at) %></p>
-    </div>
+  <%= unless Enum.empty?(@chan.links) do %>
+    <%= for l <- @chan.links do %>
+      <div>
+        <h3><%= link(l.title, to: l.url) %> <%= for t <- l.tags do %>
+              <%= link(t.name, to: tag_path(@conn, :show, @chan.slug, t.name), class: "badge badge-pill badge-primary") %>
+            <% end %>
+        </h3>
+        <p><%= l.url %><br /><%= format_date(l.inserted_at) %></p>
+      </div>
+    <% end %>
+  <% else %>
+  <div>
+    <h3>Nope, nothing here…</h3>
+  </div>
   <% end %>
 </section>

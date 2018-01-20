@@ -6,6 +6,6 @@ config :irc, IRC.State,
   nickname: "Hecaiesis",
   pass: "",
   port: 6667,
-  tls?: false,
+  ssl?: false,
   username: "Hecateros",
   channels: []

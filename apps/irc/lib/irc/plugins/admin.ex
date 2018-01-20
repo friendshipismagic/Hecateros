@@ -17,21 +17,23 @@ defmodule IRC.Plugins.Admin do
   def handle_cast({:private, %Event{}=event}, state) do
     case parse(event.message, event.sender.nick, event.client) do
       {:ok, msg} ->
-        ExIrc.Client.msg(event.client, :privmsg, event.sender.nick, msg)
+        ExIRC.Client.msg(event.client, :privmsg, event.sender.nick, msg)
       {:error, msg}  ->
         for m <- String.split(msg,"\n") do
           :timer.sleep(500)
-          ExIrc.Client.msg(event.client, :privmsg, event.sender.nick, m)
-          :timer.sleep(2000)
+          ExIRC.Client.msg(event.client, :privmsg, event.sender.nick, m)
+          :timer.sleep(700)
         end
     end
     {:noreply, state}
   end
 
+  @spec parse(String.t, String.t, pid()) :: {:ok, String.t} | {:error, String.t}
   def parse("url " <> channel, username, client) do
     with {:ok, :admin}  <- check_admin(username, channel),
-         {:ok, :authed} <- check_auth(username, client) do
-           Core.gib_slug(channel)
+         {:ok, :authed} <- check_auth(username, client),
+         {:ok, slug}    <-  Core.gib_slug(channel) do
+           {:ok, Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)}
     else
       {:error, :nochan}  -> {:error, "Bien essayé, tocard…"}
       {:error, :noadmin} -> {:error, "…\nnon."}
@@ -58,13 +60,13 @@ defmodule IRC.Plugins.Admin do
     end
   end
 
-  def parse(msg, username) do
+  def parse(msg, username, client) do
     Logger.debug "[PRIVMSG] received \"#{msg}\" from #{username}"
-    {:error, :noparse}
+    {:error, "Wat."}
   end
   
   def check_auth(username, client) do
-    user = ExIrc.Client.whois(client, username)
+    user = ExIRC.Client.whois(client, username)
     if user.account_name, do: {:ok, :authed, user.account_name}, else: {:error, :unauthed}
   end
 end
