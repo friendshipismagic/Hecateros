@@ -24,6 +24,11 @@ defmodule IRC.Plugins.Channel do
     {:noreply, state}
   end
 
+  def handle_cast({:user_info, %ExIRC.Whois{}=whois}, state) do
+
+    {:noreply, state}
+  end
+
   defp send_banner(client, nick) do
     banner = File.read!("priv/new_chan_admin.txt")
              |> String.replace("\n\n", "\n \n") 

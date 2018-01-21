@@ -13,7 +13,6 @@ defmodule IRC.Plugins.Whois do
   end
 
   def handle_cast({:whois, event}, state) do
-    
     {:noreply, state}
   end
 
