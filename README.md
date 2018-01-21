@@ -54,7 +54,6 @@ variable `public_inteface` qui correspond à l'adresse sur laquelle Nginx va éc
 - Core
   - [ ] update des tags associés à un lien si repost en moins de 30s
 - IRC
-  - [ ] Avant toute chose, attendre la prochaine version majeur de ExIRC avec les bons namespaces et WHOIS/WHO
-  - [ ] Faire revenir les informations du WHOIS à IRC.Plugins.Admin
+  - [ ] Envoyer un message à `Whois`, puis recevoir la réponse dans `Whois` et l'envoyer à `Channel` qui va à partir de là continuer le processus d'auth.
   - [ ] Remplacer le champs "nick" de l'Admin par "username"
 
