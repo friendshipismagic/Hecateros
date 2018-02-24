@@ -5,6 +5,5 @@ defmodule Core.Repo.Migrations.UniqueIndexes do
     create index(:tags, [:name], unique: true)
     create index(:chans, [:name], unique: true)
     create index(:links, [:url, :chan_id], unique: true)
-    # create index(:admins, [:nick], unique: true)
   end
 end

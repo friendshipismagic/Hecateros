@@ -18,10 +18,10 @@ defmodule Core do
     |> Map.get(:links)
   end
 
-  def insert_link(%{chan: chan_name, tags: tags, url: url, title: title}) do
+  def insert_link(%{chan: chan_name, tags: tags, url: url, title: title, description: desc}) do
     case create_chan(%{name: String.downcase(chan_name), slug: create_slug()}) do
-      {:ok, chan}  -> create_link %{chan: chan, tags: tags, url: url, title: title}
-      %Chan{}=chan -> create_link %{chan: chan, tags: tags, url: url, title: title}
+      {:ok, chan}  -> create_link %{chan: chan, tags: tags, url: url, title: title, description: desc}
+      %Chan{}=chan -> create_link %{chan: chan, tags: tags, url: url, title: title, description: desc}
     end
   end
 
@@ -39,7 +39,7 @@ defmodule Core do
       :ok ->
         chan = attributes.chan
 
-        link = Ecto.build_assoc(chan, :links, %{url: attributes.url, title: attributes.title})
+        link = Ecto.build_assoc(chan, :links, %{url: attributes.url, title: attributes.title, description: attributes.description})
 
         link |> Link.changeset(%{tags: attributes.tags})
              |> Repo.insert!
@@ -52,6 +52,7 @@ defmodule Core do
 
   @spec gib_slug(String.t) :: {:ok, String.t}
   def gib_slug(channel) do
+    Logger.debug("Channel: " <> channel)
     [slug] = Repo.all from c in Chan, where: c.name == ^channel,
                                       select: c.slug
     {:ok, slug}

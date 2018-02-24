@@ -26,10 +26,10 @@ defmodule Core.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto, "~> 2.2.6"},
-      {:hashids, "~> 2.0.4"},
-      {:httpoison, "~> 0.13.0"},
-      {:sqlite_ecto2, "~> 2.2.2"},
+      {:ecto, "~> 2.2"},
+      {:hashids, "~> 2.0"},
+      {:sqlite_ecto2, "~> 2.2"},
+      {:tesla, "~> 0.10"}
     ]
   end
 end

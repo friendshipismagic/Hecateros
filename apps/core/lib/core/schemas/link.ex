@@ -5,8 +5,9 @@ defmodule Core.Link do
   require Logger
 
   schema "links" do
-    field        :url,   :string
-    field        :title, :string
+    field        :url,         :string
+    field        :description, :string
+    field        :title,       :string
     belongs_to   :chan, Core.Chan
     many_to_many :tags, Core.Tag,
                  join_through: "tagging"
@@ -16,7 +17,8 @@ defmodule Core.Link do
 
   def changeset(%Link{} = link, attrs \\ %{}) do
     link
-    |> cast(attrs, [:url, :title])
+    |> cast(attrs, [:url, :title, :description])
+    |> validate_required([:url, :title, :description])
     |> put_assoc(:tags, parse_tags(attrs.tags))
   end
 

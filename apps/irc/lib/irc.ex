@@ -14,17 +14,7 @@ defmodule IRC do
                :realname,
                :ssl?,
                :username,
-              ]
-  end
-
-  defmodule Event do
-    defstruct [:chan,
-               :client,
-               :message,
-               :sender,
-               :tags,
-               :title,
-               :url
+               :whois,
               ]
   end
 end

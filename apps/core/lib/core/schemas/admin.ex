@@ -4,7 +4,8 @@ defmodule Core.Admin do
   alias Core.{Admin,Chan}
 
   schema "admins" do
-    field :nick, :string
+    field :nickname, :string
+    field :account_name, :string
     many_to_many :chans, Core.Chan,
                   join_through: "chan_admins"
 
@@ -13,6 +14,7 @@ defmodule Core.Admin do
 
   def changeset(%Admin{}=admin, attrs \\ %{}) do
     admin 
-    |> cast(attrs, [:nick])
+    |> cast(attrs, [:nickname, :account_name])
+    |> validate_required([:nickname, :account_name])
   end
 end

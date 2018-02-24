@@ -27,8 +27,9 @@ defmodule IRC.Mixfile do
   defp deps do
     [
       {:core, in_umbrella: true},
-      {:web,  in_umbrella: true},
-      {:exirc, path: "../../../exirc"}
+      {:exirc, path: "../../../exirc"},
+      {:open_graph_extended, "~> 0.1"},
+      {:web,  in_umbrella: true}
     ]
   end
 end

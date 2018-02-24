@@ -4,21 +4,19 @@ defmodule IRC.Application do
   use Application
   require Logger
 
-  def start(_type, _args) do
-    conf  = Application.get_env(:irc, IRC.State)
+  def start(_, _) do
+    conf = Application.get_env(:irc, IRC.State)
     {:ok, client} = ExIRC.start_link!
     state = struct(IRC.State, (conf ++ [client: client]))
 
-    plugins = [
-      IRC.Plugins.Admin,
-      IRC.Plugins.Channel,
-      IRC.Plugins.Links,
-      IRC.Plugins.Whois
-    ]
+    plugins = [{IRC.AdminHandler,   state},
+               {IRC.LinksHandler,   state},
+               {IRC.ChannelHandler, state},
+               {IRC.WhoisHandler,   state}
+              ]
 
     children = [
-      {IRC.ConnectionHandler, state}, # 1) This one receives the IRC message
-      IRC.EventHandler,               # 2) And this one dispatches the messages to the plugins.
+      {IRC.ConnectionHandler, state}
     ] ++ plugins
 
     opts = [strategy: :one_for_one, name: IRC.Supervisor]

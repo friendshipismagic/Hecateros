@@ -3,7 +3,8 @@ defmodule Core.Repo.Migrations.Admins do
 
   def change do
     create table(:admins) do
-      add :nick, :string, null: false
+      add :nickname,     :string
+      add :account_name, :string, null: false
       add :chan, references(:chans)
 
       timestamps()

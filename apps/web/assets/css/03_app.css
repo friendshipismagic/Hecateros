@@ -1,0 +1,43 @@
+/* This file is for your main application css. */
+
+footer{
+  text-align: center;
+  margin-top: 2em;
+}
+
+.header{
+  border-bottom: none;
+  padding: 2em 0.6em;
+}
+
+.card-footer .badge {
+  font-size: 1.0em;
+}
+
+#sidebar{
+  position: sticky;
+  top: 2vh;
+  display: inline-block;
+  float: right;
+  margin-left: 20px;
+  width: 100px;
+}
+
+.grid{
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -25px;
+}
+
+.grid > * {
+  width: calc(100% / 2 - 25px - .01px);
+  margin-bottom: 25px;
+  margin-left: 25px;
+}
+
+footer{
+    bottom:0;
+    margin-left: 50em; /*negative half the width*/
+    width:400px;
+    height:100px;
+}

@@ -33,8 +33,8 @@ defmodule Core.Chan do
     |> Enum.map(fn c -> get_or_insert_admin(c) end)
   end
 
-  defp get_or_insert_admin(nick) do
-    Repo.get_by(Admin, nick: nick) ||
-      Repo.insert!(%Admin{nick: nick})
+  defp get_or_insert_admin(account_name) do
+    Repo.get_by(Admin, account_name: account_name) ||
+      Repo.insert!(%Admin{account_name: account_name})
   end
 end

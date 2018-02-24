@@ -1,7 +1,7 @@
 defmodule IRC.ConnectionHandler do
   use GenServer
   require Logger
-  alias IRC.{Event,State}
+  alias IRC.State
 
   def start_link(%State{}=state) do
     GenServer.start_link __MODULE__, state, name: __MODULE__
@@ -25,6 +25,17 @@ defmodule IRC.ConnectionHandler do
     {:noreply, state}
   end
 
+
+  def handle_info({:unrecognized, _code, msg, _sender}, state) do
+    Logger.debug(msg.args)
+    {:noreply, state}
+  end
+
+  def handle_info({:notice, msg, _sender}, state) do
+    Logger.debug(msg)
+    {:noreply, state}
+  end
+
   def handle_info(:disconnected, _state) do
     Logger.debug "Disconnected from server"
     {:noreply, nil}
@@ -40,26 +51,8 @@ defmodule IRC.ConnectionHandler do
     {:noreply, state}
   end
 
-  def handle_info({:received, message, sender}, state) do
-    IRC.EventHandler.notify(:private, %Event{message: message, sender: sender, client: state.client})
-    {:noreply, state}
-  end
-
-  def handle_info({:received, message, sender, chan}, state) do
-    IRC.EventHandler.notify(:public, %Event{message: message, sender: sender, chan: chan, client: state.client})
-    {:noreply, state}
-  end
-
-  # sender = %{:host, :nick, :user}
-  def handle_info({:invited, user, chan}, state) do
-    Logger.debug "Invited in #{chan} by #{user.nick}"
-    IRC.EventHandler.notify(:invited, %Event{sender: user.nick, chan: chan, client: state.client})
-    {:noreply, state}
-  end
-
-  def handle_info({:whois, whois}, state) do
-    Logger.debug "[Whois] " <> inspect(whois)
-    IRC.EventHandler.notify(:whois, whois)
+  def handle_info({:whois, %ExIRC.Whois{}=whois}, state) do
+    Agent.update(IRC.WhoisHandler, fn buffer -> Map.put(buffer, whois.nick, whois) end)
     {:noreply, state}
   end
 
