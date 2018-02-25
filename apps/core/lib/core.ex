@@ -85,5 +85,12 @@ defmodule Core do
     x
   end
 
-  def version, do: System.cmd("git", ~w(describe --always --tags HEAD)) |> elem(0) |> String.replace("\n", "")
+  def version do
+    if File.exists?(".git") do
+      version = System.cmd("git", ~w(describe --always --tags HEAD)) |> elem(0) |> String.replace("\n", "")
+      "Running on version #{version}"
+    else
+      ""
+    end
+  end
 end
