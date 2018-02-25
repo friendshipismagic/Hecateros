@@ -38,7 +38,7 @@ defmodule IRC.ChannelHandler do
   end
 
   defp send_banner(client, nick) do
-    banner = File.read!("priv/new_chan_admin.txt")
+    banner = File.read!("apps/irc/priv/new_chan_admin.txt")
              |> String.replace("\n\n", "\n \n")
              |> String.split("\n")
 

@@ -26,6 +26,7 @@ defmodule Core.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:distillery, "~> 1.5"},
       {:ecto, "~> 2.2"},
       {:hashids, "~> 2.0"},
       {:sqlite_ecto2, "~> 2.2"},

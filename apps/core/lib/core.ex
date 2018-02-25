@@ -29,7 +29,6 @@ defmodule Core do
     chan = Chan.changeset(%Chan{}, %{name: String.downcase(chan_name), slug: slug})
     Chan
     |> Repo.get_by(name: String.downcase(chan_name)) || Repo.insert(chan)
-    |> trace
     |> pack
   end
 

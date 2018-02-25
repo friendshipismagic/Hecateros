@@ -13,7 +13,7 @@ defmodule IRC.LinksHandler do
     {:ok, client}
   end
 
-  def handle_info({:received, message, sender, chan}, state) do
+  def handle_info({:received, message, _sender, chan}, state) do
     message
     |> parse(chan)
     |> insert
