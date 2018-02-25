@@ -1,0 +1,25 @@
+(:=~~~~      ~~~~=:)  _                ~~~~=:) 
+| | | | (:=~~~~      | |    (:=~~~~          
+| |_| | ___  ___ __ _| |_ ___ _ __ ___  ___ 
+|  _  |/ _ \/ __/ _` | __/ _ | '__/ _ \/ __| ~~~~=:)
+| | | |  __| (_| (_| | ||  __| | | (_) \__ \
+\_| |_/\___|\___\__,_|\__\___|_|  \___/|___/
+        (:=~~~~         (:=~~~~
+~~~~=:)         ~~~~=:)        ~~~~=:)        ~~~~=:)
+
+Welcome! You've summoned Hecateros on your channel, which makes you
+the proud administrator of this bot on this channel.
+
+Public commands
+———————————————
+
+- help <topic>
+    If available, displays a help message about the specified topic.
+    You may list them by simply typing `help`.
+
+Administrator commands
+——————————————————————
+
+- show url <#channel> 
+    Returns the URL of the specified channel.
+- add admin <#channel> <nickname>

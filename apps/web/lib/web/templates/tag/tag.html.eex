@@ -1,0 +1,23 @@
+<h4><%= link("Retour à la page précédente", to: chan_url(Web.Endpoint, :show, @slug)) %></h4>
+
+<h1 class="header">Liens pour le tag <span class="badge badge-primary"><%= @tag %><span></h1>
+<section id="links" class="grid grid-2 grid-1-s">
+  <%= unless Enum.empty?(@links) do %>
+    <%= for l <- @links do %>
+      <div class="card">
+        <div class="card-body">
+          <%# <h4 class="card-title"><%= link(l.title, to: l.url) %1></h4> %>
+            <h4 class="card-title"><%= link(l.title, to: l.url) %></h4>
+          <p class="card-text"><%= l.description %></p>
+        </div>
+        <div class="card-footer text-muted">
+          <p><%= format_date(l.inserted_at) %></p>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+  <div>
+    <h3>Nope, nothing here…</h3>
+  </div>
+  <% end %>
+</section>

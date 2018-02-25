@@ -1,0 +1,37 @@
+<header class="header">
+  <h1>Links for <%= link(@chan.name, to: chan_path(@conn, :show, @chan.slug)) %></h1>
+</header>
+
+<section id="sidebar">
+  <nav>
+    <h3>Tags</h3>
+    <ul>
+      <%= for t <- @tags do %>
+        <li><%= link(t, to: tag_path(@conn, :show, @chan.slug, t))%></li>
+      <% end %>
+    </ul>
+  </nav>
+</section>
+
+<section id="links" class="grid grid-2 grid-1-s">
+  <%= unless Enum.empty?(@chan.links) do %>
+    <%= for l <- @chan.links do %>
+      <div class="card">
+        <div class="card-body">
+            <h4 class="card-title"><%= link(l.title, to: l.url) %></h4>
+            <p class="card-text"><%= l.description %></p>
+            <p><%= format_date(l.inserted_at) %></p>
+        </div>
+        <div class="card-footer text-muted">
+          <%= for t <- l.tags do %>
+            <%= link(t.name, to: tag_path(@conn, :show, @chan.slug, t.name), class: "badge badge-primary") %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div>
+      <h3>Nope, nothing here…</h3>
+    </div>
+  <% end %>
+</section>
