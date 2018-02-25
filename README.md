@@ -14,6 +14,8 @@ Hécatéros repose sur un canal IRC et récupère les liens qui y sont posté. I
 Pour plus de *privacy*, les URL des canaux dans l'interface web ne seront pas nominatives mais seront de la forme
 `https://hecateros.example.org/c/UUID`.
 
+Vous trouverez une version *live* du bot sur le réseau RezoSup.
+
 
 ## Les tags
 
@@ -53,7 +55,3 @@ variable `public_inteface` qui correspond à l'adresse sur laquelle Nginx va éc
 
 - Core
   - [ ] update des tags associés à un lien si repost en moins de 30s
-- IRC
-  - [ ] Envoyer un message à `Whois`, puis recevoir la réponse dans `Whois` et l'envoyer à `Channel` qui va à partir de là continuer le processus d'auth.
-  - [ ] Remplacer le champs "nick" de l'Admin par "username"
-
