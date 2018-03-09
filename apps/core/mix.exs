@@ -28,7 +28,7 @@ defmodule Core.Mixfile do
     [
       {:distillery, "~> 1.5"},
       {:ecto, "~> 2.2"},
-      {:exirc, github: "bitwalker/exirc", branch: "harmonization"},
+      {:exirc, github: "bitwalker/exirc"},
       {:hashids, "~> 2.0"},
       {:prometheus_ecto, "~> 1.0"},
       {:prometheus_ex, "~> 1.1"},

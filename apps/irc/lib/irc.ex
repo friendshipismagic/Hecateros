@@ -8,12 +8,12 @@ defmodule IRC do
                :channels,
                :handlers,
                :host,
-               :nickname,
+               :nick,
                :pass,
                :port,
-               :realname,
+               :name,
                :ssl?,
-               :username,
+               :user,
                :whois,
               ]
   end

@@ -2,10 +2,10 @@ use Mix.Config
 
 config :irc, IRC.State,
   host: "localhost",
-  realname: "Ἑκάτερος",
-  nickname: "Hecaiesis",
+  name: "Ἑκάτερος",
+  nick: "Hecaiesis",
   pass: "",
   port: 6667,
   ssl?: false,
-  username: "Hecateros",
+  user: "Hecateros",
   channels: []

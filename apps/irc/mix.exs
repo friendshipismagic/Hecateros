@@ -27,7 +27,7 @@ defmodule IRC.Mixfile do
   defp deps do
     [
       {:core, in_umbrella: true},
-      {:exirc, github: "bitwalker/exirc", branch: "harmonization"},
+      {:exirc, github: "bitwalker/exirc"},
       {:open_graph_extended, "~> 0.1"},
       {:web,  in_umbrella: true}
     ]

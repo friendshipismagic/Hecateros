@@ -21,7 +21,7 @@ defmodule IRC.ConnectionHandler do
   def handle_info({:connected, _server, _port}, state) do
     Logger.info(IO.ANSI.green() <> "Establishing connection to #{state.host}" <> IO.ANSI.reset())
     
-    ExIRC.Client.logon state.client, state.pass, state.nickname, state.username, state.realname
+    ExIRC.Client.logon state.client, state.pass, state.nick, state.user, state.name
     {:noreply, state}
   end
 

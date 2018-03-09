@@ -5,11 +5,11 @@ config :logger, :console,
 
 config :irc, IRC.State,
   host: "irc.enst.rezosup.net",
-  realname: "Ἑκάτερος",
-  nickname: "Hecaiesis",
+  name: "Ἑκάτερος",
+  nick: "Hecaiesis",
   pass: "",
   port: 6767,
   ssl?: true,
-  username: "Hecateros",
+  user: "Hecateros",
   channels: []
 
