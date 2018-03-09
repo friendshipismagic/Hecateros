@@ -10,7 +10,7 @@
   "distillery": {:hex, :distillery, "1.5.2", "eec18b2d37b55b0bcb670cf2bcf64228ed38ce8b046bb30a9b636a6f5a4c0080", [:mix], [], "hexpm"},
   "ecto": {:hex, :ecto, "2.2.8", "a4463c0928b970f2cee722cd29aaac154e866a15882c5737e0038bbfcf03ec2c", [:mix], [{:db_connection, "~> 1.1", [hex: :db_connection, repo: "hexpm", optional: true]}, {:decimal, "~> 1.2", [hex: :decimal, repo: "hexpm", optional: false]}, {:mariaex, "~> 0.8.0", [hex: :mariaex, repo: "hexpm", optional: true]}, {:poison, "~> 2.2 or ~> 3.0", [hex: :poison, repo: "hexpm", optional: true]}, {:poolboy, "~> 1.5", [hex: :poolboy, repo: "hexpm", optional: false]}, {:postgrex, "~> 0.13.0", [hex: :postgrex, repo: "hexpm", optional: true]}, {:sbroker, "~> 1.0", [hex: :sbroker, repo: "hexpm", optional: true]}], "hexpm"},
   "esqlite": {:hex, :esqlite, "0.2.3", "1a8b60877fdd3d50a8a84b342db04032c0231cc27ecff4ddd0d934485d4c0cd5", [:rebar3], [], "hexpm"},
-  "exirc": {:git, "https://github.com/bitwalker/exirc.git", "2651cd8a4e882c0c05e5fe5a9a8296714fbe7bec", [branch: "harmonization"]},
+  "exirc": {:git, "https://github.com/bitwalker/exirc.git", "d56e1d93ef83d350606e489021a276f8a49e9480", []},
   "file_system": {:hex, :file_system, "0.2.4", "f0bdda195c0e46e987333e986452ec523aed21d784189144f647c43eaf307064", [:mix], [], "hexpm"},
   "floki": {:hex, :floki, "0.20.0", "fd018e3e1c7a77cafbe4d51c9811102f701bbbbbd4c818e974ea371348bd0719", [:mix], [{:html_entities, "~> 0.4.0", [hex: :html_entities, repo: "hexpm", optional: false]}, {:mochiweb, "~> 2.15", [hex: :mochiweb, repo: "hexpm", optional: false]}], "hexpm"},
   "flowex": {:hex, :flowex, "0.5.3", "4abc25ecda620adb3fa6b62078877ff02b50e4f47e796eb565467634615db7f3", [], [{:gen_stage, "0.12.2", [hex: :gen_stage, repo: "hexpm", optional: false]}], "hexpm"},

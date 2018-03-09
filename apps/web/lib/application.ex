@@ -8,7 +8,7 @@ defmodule Web.Application do
     import Supervisor.Spec
     Web.PhoenixInstrumenter.setup()
     Web.PipelineInstrumenter.setup()
-    Web.PrometheusExporter.setup()
+    Web.MetricsExporter.setup()
     Prometheus.Registry.register_collector(:prometheus_process_collector)
 
 

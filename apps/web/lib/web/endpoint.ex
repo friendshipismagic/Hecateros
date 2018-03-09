@@ -38,9 +38,9 @@ defmodule Web.Endpoint do
     key: "_web_key",
     signing_salt: "tS8jS7x2"
 
-  plug Web.Router
-  plug Web.PrometheusExporter     # makes the /metrics URL happen
+  plug Web.MetricsExporter     # makes the /metrics URL happen
   plug Web.PipelineInstrumenter   # measures pipeline exec times
+  plug Web.Router
 
   @doc """
   Callback invoked for dynamically configuring the endpoint.

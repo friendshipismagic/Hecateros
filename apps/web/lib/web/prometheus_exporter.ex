@@ -1,3 +1,3 @@
-defmodule Web.PrometheusExporter do
+defmodule Web.MetricsExporter do
   use Prometheus.PlugExporter
 end
