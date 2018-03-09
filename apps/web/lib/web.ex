@@ -64,4 +64,16 @@ defmodule Web do
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
+  
+  defmodule PipelineInstrumenter do
+    use Prometheus.PlugPipelineInstrumenter
+
+    def label_value(:request_path, conn) do
+      conn.request_path
+    end
+  end
+
+  defmodule PhoenixInstrumenter do
+    use Prometheus.PhoenixInstrumenter
+  end
 end

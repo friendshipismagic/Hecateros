@@ -63,8 +63,8 @@ defmodule IRC.AdminHandler do
 
   @spec get_url(String.t, %ExIRC.Whois{}) :: {:ok, String.t} | {:error, atom()}
   defp get_url(channel, user) do
-    with {:ok, :admin}  <- check_admin(user, channel),
-         {:ok, :authed} <- check_auth(user),
+    with {:ok, :authed} <- check_auth(user),
+         {:ok, :admin}  <- check_admin(user, channel),
          {:ok, slug}    <- Core.gib_slug(channel) do
            {:ok, Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)}
     end

@@ -29,6 +29,11 @@ defmodule Core.Mixfile do
       {:distillery, "~> 1.5"},
       {:ecto, "~> 2.2"},
       {:hashids, "~> 2.0"},
+      {:prometheus_ecto, "~> 1.0"},
+      {:prometheus_ex, "~> 1.1"},
+      {:prometheus_phoenix, "~> 1.2"},
+      {:prometheus_plugs, "~> 1.1"},
+      {:prometheus_process_collector, "~> 1.3"},
       {:sqlite_ecto2, "~> 2.2"},
       {:tesla, "~> 0.10"}
     ]

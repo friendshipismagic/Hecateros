@@ -6,6 +6,7 @@ defmodule Core.Application do
   use Application
 
   def start(_type, _args) do
+    Core.RepoInstrumenter.setup()
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: Core.Worker.start_link(arg)

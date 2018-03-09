@@ -10,3 +10,7 @@ defmodule Core.Repo do
     end
   end
 end
+
+defmodule Core.RepoInstrumenter do
+  use Prometheus.EctoInstrumenter
+end

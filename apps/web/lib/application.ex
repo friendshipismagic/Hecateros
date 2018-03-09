@@ -1,10 +1,16 @@
 defmodule Web.Application do
   use Application
+  require Prometheus.Registry
 
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec
+    Web.PhoenixInstrumenter.setup()
+    Web.PipelineInstrumenter.setup()
+    Web.PrometheusExporter.setup()
+    Prometheus.Registry.register_collector(:prometheus_process_collector)
+
 
     # Define workers and child supervisors to be supervised
     children = [
