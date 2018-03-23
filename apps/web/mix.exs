@@ -44,6 +44,12 @@ defmodule Web.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:phoenix_pubsub, "~> 1.0"},
       {:timex, "~> 3.1.24"},
+      {:prometheus_ecto, "~> 1.0"},
+      {:prometheus_ex, "~> 1.1"},
+      {:prometheus_phoenix, "~> 1.2"},
+      {:prometheus_plugs, "~> 1.1"},
+      {:prometheus_process_collector, "~> 1.3"},
+
     ]
   end
 end
