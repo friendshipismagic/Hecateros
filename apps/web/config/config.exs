@@ -11,7 +11,7 @@ config :web,
 
 # Configures the endpoint
 config :web, Web.Endpoint,
-  instrumenters: [Web.Endpoint.Instrumenter]
+  instrumenters: [Web.Endpoint.Instrumenter],
   url: [host: "localhost"],
   secret_key_base: "8NIafedDNj676Chf5krNBbsO6CJ1zMAcr/SnOuRB8zExPz+9m4V0capj1wGwW08r",
   render_errors: [view: Web.ErrorView, accepts: ~w(html json)],
