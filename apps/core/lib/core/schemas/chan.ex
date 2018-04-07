@@ -11,8 +11,10 @@ defmodule Core.Chan do
     field :name, :string
 
     embeds_one :settings, Settings do
-      field :has_filter?, :boolean
-      field :filters, {:array, :string}
+      field :has_tag_filter?, :boolean
+      field :has_url_filter?, :boolean
+      field :url_filters, {:array, :string}
+      field :tag_filters, {:array, :string}
     end
     many_to_many :admins, Admin,
                   join_through: "chan_admins"
@@ -37,7 +39,8 @@ defmodule Core.Chan do
 
   def register_changeset(%Chan{} = chan, attrs \\ %{}) do
     changeset(chan, attrs)
-    |> put_change(:settings, %Chan.Settings{has_filter?: false, filters: []})
+    |> put_change(:settings, %Chan.Settings{has_tag_filter?: false, has_url_filter?: true,
+                                            url_filters: [], tag_filters: []})
   end
 
   defp parse_admins(admins) when is_list(admins) do
@@ -56,29 +59,45 @@ defmodule Core.Chan do
   ###########
 
 
+  ## Tag Filters ##
+
   @doc "Take a `%Core.Chan{}` struct, or just its name, and flick the switch for the filter feature."
-  def switch_filters(:on, chan) when is_binary(chan) do
+  def switch_tag_filters(:on, chan) when is_binary(chan) do
     Chan
     |> Repo.get_by(name: chan)
-    |> turn_filter_on
+    |> turn_tag_filter(true)
   end
 
-  def switch_filters(:off, chan) when is_binary(chan) do
+  def switch_tag_filters(:off, chan) when is_binary(chan) do
     Chan
-    |> Repo.get_by(Chan, name: chan)
-    |> turn_filter_off
+    |> Repo.get_by(name: chan)
+    |> turn_tag_filter(false)
   end
 
-  def turn_filter_on(%Chan{}=chan) do
-    chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_filter?, true)
+  def turn_tag_filter(%Chan{}=chan, bool) do
+    chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_tag_filter?, bool)
     chan
     |> Ecto.Changeset.change
     |> Ecto.Changeset.put_embed(:settings, chg)
     |> Repo.update!
   end
 
-  def turn_filter_off(%Chan{}=chan) do
-    chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_filter?, false)
+  ## URL Filters ##
+
+  def switch_url_filters(:on, chan) when is_binary(chan) do
+    Chan
+    |> Repo.get_by(name: chan)
+    |> turn_url_filter(true)
+  end
+
+  def switch_url_filters(:off, chan) when is_binary(chan) do
+    Chan
+    |> Repo.get_by(name: chan)
+    |> turn_url_filter(false)
+  end
+
+  def turn_url_filter(%Chan{}=chan, bool) do
+    chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_url_filter?, bool)
     chan
     |> Ecto.Changeset.change
     |> Ecto.Changeset.put_embed(:settings, chg)

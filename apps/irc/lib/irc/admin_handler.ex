@@ -40,15 +40,30 @@ defmodule IRC.AdminHandler do
     {:noreply, state}
   end
 
-  def handle_info({:received, "filter " <> rest, sender}, client=state) do
+  def handle_info({:received, "url filter " <> rest, sender}, client=state) do
     case String.split(String.downcase(rest), " ") do
-      [channel, target] when target in ["on", "off"] ->
+      [channel, switch] when switch in ["on", "off"] ->
         response = sender
                    |> is_admin(channel, client)
-                   |> process_auth({:filter, channel, target})
+                   |> process_auth({:filter_url, channel, switch})
+
         ExIRC.Client.msg(client, :privmsg, sender.nick, response)
       _ ->
-        ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `filter <#channel> <on|off>`")
+        ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `url filter <#channel> <on|off>`")
+    end
+    {:noreply, state}
+  end
+
+  def handle_info({:received, "tag filter " <> rest, sender}, client=state) do
+    case String.split(String.downcase(rest), " ") do
+      [channel, switch] when switch in ["on", "off"] ->
+        response = sender
+                   |> is_admin(channel, client)
+                   |> process_auth({:filter_tag, channel, switch})
+
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+      _ ->
+        ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `tag filter <#channel> <on|off>`")
     end
     {:noreply, state}
   end
@@ -99,14 +114,19 @@ defmodule IRC.AdminHandler do
     "You don't seem registered with NickServ…"
   end
 
+  def process_message({:filter_url, channel, switch}) do
+    Chan.switch_url_filters(String.to_atom(switch), channel)
+    "Switched URL filter #{switch} on #{channel}."
+  end
+
+  def process_message({:filter_tag, channel, switch}) do
+    Chan.switch_tag_filters(String.to_atom(switch), channel)
+    "Switched tags filter #{switch} on #{channel}"
+  end
+
   def process_message({:show_url, channel}) do
     {:ok, slug} = Chan.gib_slug(channel)
     Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)
-  end
-
-  def process_message({:filter, channel, switch}) do
-    Chan.switch_filters(String.to_atom(switch), channel)
-    "Turned filters #{switch} for #{channel}"
   end
 
   def process_message({:add_admin, channel, nick}) do
