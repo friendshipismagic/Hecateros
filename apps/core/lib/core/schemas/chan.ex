@@ -1,8 +1,10 @@
 defmodule Core.Chan do
-  use Ecto.Schema
-  import Ecto.Changeset
-  alias __MODULE__
   alias Core.{Admin,Repo,Chan,Link}
+  alias __MODULE__
+  import Ecto.Changeset
+  import Ecto.Query
+  require Logger
+  use Ecto.Schema
 
   schema "chans" do
     field :slug, :string
@@ -55,10 +57,28 @@ defmodule Core.Chan do
 
 
   @doc "Take a `%Core.Chan{}` struct, or just its name, and flick the switch for the filter feature."
-  def switch_filters(chan) when is_binary(chan), do: Repo.get_by(Chan, name: chan) |> switch_filters
-  def switch_filters(%Chan{}=chan) do
-    filter? = not chan.settings.has_filter?
-    chg     = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_filter?, filter?)
+  def switch_filters(:on, chan) when is_binary(chan) do
+    Chan
+    |> Repo.get_by(name: chan)
+    |> turn_filter_on
+  end
+
+  def switch_filters(:off, chan) when is_binary(chan) do
+    Chan
+    |> Repo.get_by(Chan, name: chan)
+    |> turn_filter_off
+  end
+
+  def turn_filter_on(%Chan{}=chan) do
+    chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_filter?, true)
+    chan
+    |> Ecto.Changeset.change
+    |> Ecto.Changeset.put_embed(:settings, chg)
+    |> Repo.update!
+  end
+
+  def turn_filter_off(%Chan{}=chan) do
+    chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_filter?, false)
     chan
     |> Ecto.Changeset.change
     |> Ecto.Changeset.put_embed(:settings, chg)

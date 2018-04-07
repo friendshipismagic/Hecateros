@@ -2,6 +2,7 @@ defmodule IRC.ChannelHandler do
 
   alias IRC.State
   require Logger
+  alias Core.{Chan,Link}
   import IRC.Helpers, only: [get_whois: 1]
   use GenServer
 
@@ -21,7 +22,7 @@ defmodule IRC.ChannelHandler do
       ExIRC.Client.msg(client, :privmsg, sender.nick, "Sorry, you don't seem to be registered to NickServ. I can't let you administrate Hecateros on #{chan}.")
     else
       ExIRC.Client.join(client, chan)
-      Core.create_chan(%{name: chan, slug: Core.create_slug()})
+      Chan.create_chan(%{name: chan, slug: Link.create_slug()})
       case Core.Users.check_admin(user, chan) do
         {:ok, :admin} ->
           nil

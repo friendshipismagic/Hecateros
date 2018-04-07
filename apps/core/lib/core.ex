@@ -1,17 +1,16 @@
 defmodule Core do
   @moduledoc """
   """
-  alias Core.{Chan,Repo,Link}
+  alias Core.{Chan,Link}
   require Logger
   import Ecto.Query
 
-  defdelegate get_links(criteria, slug), to: Core.Link
-  defdelegate insert_link(map),          to: Core.Link
-  defdelegate create_link(attrs)         to: Core.Link
+  defdelegate get_links(criteria, slug), to: Link
+  defdelegate insert_link(map),          to: Link
+  defdelegate create_link(attrs),        to: Link
 
-  defdelegate switch_filters(chan), to: Core.Chan
-  defdelegate gib_slug(chan),       to: Core.Chan
-  defdelegate create_chan(map),     do: Core.Chan
+  defdelegate gib_slug(chan),       to: Chan
+  defdelegate create_chan(map),     to: Chan
 
   ###########
   # Helpers #

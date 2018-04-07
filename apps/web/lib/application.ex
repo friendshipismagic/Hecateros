@@ -1,6 +1,7 @@
 defmodule Web.Application do
   use Application
   require Prometheus.Registry
+  require Logger
 
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
@@ -23,6 +24,7 @@ defmodule Web.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Web.Supervisor]
+    Logger.info(IO.ANSI.green <> "Web application started!" <> IO.ANSI.reset())
     Supervisor.start_link(children, opts)
   end
 

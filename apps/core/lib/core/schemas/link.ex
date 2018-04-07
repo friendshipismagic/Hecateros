@@ -1,7 +1,8 @@
 defmodule Core.Link do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Core.{Tag,Repo,Link}
+  alias Core.{Tag,Chan,Repo,Link}
+  import Ecto.Query
   require Logger
 
   schema "links" do
@@ -49,7 +50,7 @@ defmodule Core.Link do
   end
 
   def insert_link(%{chan: chan_name, tags: tags, url: url, title: title, description: desc}) do
-    case create_chan(%{name: String.downcase(chan_name), slug: create_slug()}) do
+    case Chan.create_chan(%{name: String.downcase(chan_name), slug: create_slug()}) do
       {:ok, chan}  -> create_link %{chan: chan, tags: tags, url: url, title: title, description: desc}
       %Chan{}=chan -> create_link %{chan: chan, tags: tags, url: url, title: title, description: desc}
     end
