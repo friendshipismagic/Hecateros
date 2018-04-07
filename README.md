@@ -50,8 +50,3 @@ Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un
 
 Un dossier `deploy` fourni un playbook Ansible avec le template et les fichiers de configuration utilisés. Le fichier `hosts` utilisé doit exporter la
 variable `public_inteface` qui correspond à l'adresse sur laquelle Nginx va écouter.
-
-## TODO
-
-- Core
-  - [ ] update des tags associés à un lien si repost en moins de 30s

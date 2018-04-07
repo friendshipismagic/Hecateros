@@ -2,16 +2,20 @@ defmodule Core.Chan do
   use Ecto.Schema
   import Ecto.Changeset
   alias __MODULE__
-  alias Core.Admin
-  alias Core.Repo
+  alias Core.{Admin,Repo,Chan,Link}
 
   schema "chans" do
     field :slug, :string
     field :name, :string
-    many_to_many :admins, Core.Admin,
+
+    embeds_one :settings, Settings do
+      field :has_filter?, :boolean
+      field :filters, {:array, :string}
+    end
+    many_to_many :admins, Admin,
                   join_through: "chan_admins"
 
-    has_many :links, Core.Link
+    has_many :links, Link
 
     timestamps()
   end
@@ -23,12 +27,18 @@ defmodule Core.Chan do
     chan
     |> Repo.preload(:admins)
     |> cast(attrs, [:name, :slug])
+    |> cast_embed(:settings)
     |> validate_required([:name, :slug])
     |> validate_format(:name, ~r/#.*/, message: "The channel name must begin with at least a # character")
     |> put_assoc(:admins, parse_admins(Map.get(attrs, :admins, [])))
   end
 
-  def parse_admins(admins) when is_list(admins) do
+  def register_changeset(%Chan{} = chan, attrs \\ %{}) do
+    changeset(chan, attrs)
+    |> put_change(:settings, %Chan.Settings{has_filter?: false, filters: []})
+  end
+
+  defp parse_admins(admins) when is_list(admins) do
     admins
     |> Enum.map(fn c -> get_or_insert_admin(c) end)
   end
