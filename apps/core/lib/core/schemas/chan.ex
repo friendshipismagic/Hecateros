@@ -47,4 +47,40 @@ defmodule Core.Chan do
     Repo.get_by(Admin, account_name: account_name) ||
       Repo.insert!(%Admin{account_name: account_name})
   end
+
+
+  ###########
+  # Helpers #
+  ###########
+
+
+  @doc "Take a `%Core.Chan{}` struct, or just its name, and flick the switch for the filter feature."
+  def switch_filters(chan) when is_binary(chan), do: Repo.get_by(Chan, name: chan) |> switch_filters
+  def switch_filters(%Chan{}=chan) do
+    filter? = not chan.settings.has_filter?
+    chg     = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_filter?, filter?)
+    chan
+    |> Ecto.Changeset.change
+    |> Ecto.Changeset.put_embed(:settings, chg)
+    |> Repo.update!
+  end
+
+  @spec gib_slug(String.t) :: {:ok, String.t}
+  def gib_slug(channel) when is_binary(channel) do
+    Logger.debug("Channel: " <> channel)
+    [slug] = Repo.all from c in Chan, where: c.name == ^channel,
+                                      select: c.slug
+    {:ok, slug}
+  end
+
+  def create_chan(%{name: chan_name, slug: slug}) do
+    chan = Chan.register_changeset(%Chan{}, %{name: String.downcase(chan_name), slug: slug})
+    Chan
+    |> Repo.get_by(name: String.downcase(chan_name)) || Repo.insert(chan)
+    |> pack
+  end
+
+  defp pack({:error, x}), do: {:error, x}
+  defp pack({:ok, x}),    do: {:ok, x}
+  defp pack(x),           do: {:ok, x}
 end
