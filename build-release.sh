@@ -2,7 +2,7 @@
 set -e
 
 export MIX_ENV=prod
-export HOSTNAME=hecateros.kratom.random.sh
+export HOSTNAME=hekateros.kratom.random.sh
 export PORT=4000
 
 wget https://github.com/friendshipismagic/Hecateros/archive/master.zip -O master.zip

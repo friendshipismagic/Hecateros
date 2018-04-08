@@ -1,16 +1,16 @@
 server {
     listen         {{public_interface}};
-    server_name    hecateros.kratom.random.sh;
+    server_name    hekateros.kratom.random.sh;
     return         301 https://$server_name$request_uri; #Redirection 
 } 
 
 server {
 
     listen {{public_interface}}:443 ssl http2;
-    server_name hecateros.kratom.random.sh;
+    server_name hekateros.kratom.random.sh;
 
-    access_log /var/log/nginx/access_hecateros.log;
-    error_log /var/log/nginx/error_hecateros.log;
+    access_log /var/log/nginx/access_hekateros.log;
+    error_log /var/log/nginx/error_hekateros.log;
 
     location / {
       proxy_set_header X-Forwarded-Proto http;
@@ -23,7 +23,7 @@ server {
   }
 
     ssl on;
-    ssl_certificate /etc/letsencrypt/live/hecateros.kratom.random.sh/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/hecateros.kratom.random.sh/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/hekateros.kratom.random.sh/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/hekateros.kratom.random.sh/privkey.pem;
 
 }

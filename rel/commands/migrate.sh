@@ -1,3 +1,3 @@
 #!/bin/sh
 
-"$RELEASE_ROOT_DIR"/bin/hecateros command Elixir.Core.Release seed
+"$RELEASE_ROOT_DIR"/bin/hekateros command Elixir.Core.Release seed

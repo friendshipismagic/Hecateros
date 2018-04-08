@@ -3,5 +3,5 @@ set -e
 
 git pull
 ./make-release.sh
-_build/prod/rel/hecateros/bin/hecateros stop
-_build/prod/rel/hecateros/bin/hecateros start
+_build/prod/rel/hekateros/bin/hekateros stop
+_build/prod/rel/hekateros/bin/hekateros start

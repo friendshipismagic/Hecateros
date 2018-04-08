@@ -15,8 +15,8 @@
     - copy: src=files/mime_types  dest=/usr/local/etc/nginx/mime_types
 
     - name: Configurer Hecateros
-      template: src=hecateros.j2 dest=/usr/local/etc/nginx/sites-available/hecateros
-    - file: src=/usr/local/etc/nginx/sites-available/hecateros dest=/usr/local/etc/nginx/sites-enabled/hecateros state=link
+      template: src=hekateros.j2 dest=/usr/local/etc/nginx/sites-available/hekateros
+    - file: src=/usr/local/etc/nginx/sites-available/hekateros dest=/usr/local/etc/nginx/sites-enabled/hekateros state=link
       notify:
         - restart nginx
 

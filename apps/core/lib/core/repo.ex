@@ -3,7 +3,7 @@ defmodule Core.Repo do
 
   def init(_type, config) do
     unless config[:database] do
-      database = Path.join(System.get_env("HOME"), "/.db/hecateros.sqlite3")
+      database = Path.join(System.get_env("HOME"), "/.db/hekateros.sqlite3")
       {:ok, [database: database] ++ config}
     else
       {:ok, config}
