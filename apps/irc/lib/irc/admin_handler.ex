@@ -3,6 +3,7 @@ defmodule IRC.AdminHandler do
   alias IRC.State
   import IRC.Helpers, only: [get_whois: 1, check_auth: 1]
   import Core.Users, only: [check_admin: 2, add_admin: 2]
+  alias Core.{Chan,Repo}
   require Logger
   use GenServer
 
@@ -15,38 +16,104 @@ defmodule IRC.AdminHandler do
     {:ok, client}
   end
 
-  def handle_info({:received, "show url " <> channel, sender}, client=state) do
-    ExIRC.Client.whois(client, sender.nick)
-    user    = get_whois(sender.nick)
-    channel = channel |> String.downcase |> String.trim
 
-    case get_url(channel, user) do
-      {:ok, url} ->
-        ExIRC.Client.msg(client, :privmsg, user.nick, url)
-      {:error, :noadmin} ->
-        ExIRC.Client.msg(client, :privmsg, user.nick, "You're not an admin for this channel.")
-      {:error, :nochan} ->
-        ExIRC.Client.msg(client, :privmsg, user.nick, "Am I getting old or did you misspell the channel's name?")
-      {:error, :unauthed} -> 
-        ExIRC.Client.msg(client, :privmsg, user.nick, "You don't seem registered with NickServ…")
-    end
-    {:noreply, state}
-  end
+  #### Messages ####
 
-  def handle_info({:received, "show admins " <> _channel, _sender}, state) do
+  def handle_info({:received, "show url " <> rest, sender}, client=state) do
+    channel = rest |> String.downcase |> String.trim
+
+    response = sender
+               |> is_admin(channel, client)
+               |> process_auth({:show_url, channel})
+
+    ExIRC.Client.msg(client, :privmsg, sender.nick, response)
     {:noreply, state}
   end
 
   def handle_info({:received, "add admin " <> rest, sender}, client=state) do
     [channel, nick] = String.split(rest, " ")
-    ExIRC.Client.whois(client, nick)
-    case check_and_add_admin(channel, nick) do
-      {:ok, _} ->
-        ExIRC.Client.msg(client, :privmsg, sender.nick, "Admin #{nick} succesfully added for #{channel}.")
-      {:error, :invalid} ->
-        ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `add admin <#channel> <nickname>")
-      {:Error, :nochan} ->
-        ExIRC.Client.msg(client, :privmsg, sender.nick, "Am I getting old or did you misspell the channel's name?")
+    response = sender
+               |> is_admin(channel, client)
+               |> process_auth({:add_admin, channel, nick})
+
+    ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+    {:noreply, state}
+  end
+
+  def handle_info({:received, "url filter " <> rest, sender}, client=state) do
+    IO.puts rest
+    case String.split(String.downcase(rest), " ") do
+      [channel, "show"] ->
+        response = sender
+                   |> is_admin(channel, client)
+                   |> process_auth({:show_filter_url, channel})
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
+      [channel, switch] when switch in ["on", "off"] ->
+        response = sender
+                   |> is_admin(channel, client)
+                   |> process_auth({:filter_url, channel, switch})
+
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
+      [channel, command, urls] when command in ["add", "delete", "replace"] ->
+        urllist = MapSet.new(String.split(urls, ","))
+        response = case command do
+                    "add" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:add_url_filter, channel, urllist})
+                    "delete" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:delete_url_filter, channel, urllist})
+                    "replace" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:replace_url_filter, channel, urllist})
+                  end
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+      _ ->
+        ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `url filter <#channel> <on|off>`")
+    end
+    {:noreply, state}
+  end
+
+  def handle_info({:received, "tag filter " <> rest, sender}, client=state) do
+    IO.puts rest
+    case String.split(String.downcase(rest), " ") do
+      [channel, "show"] ->
+        response = sender
+                   |> is_admin(channel, client)
+                   |> process_auth({:show_filter_tag, channel})
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
+      [channel, switch] when switch in ["on", "off"] ->
+        response = sender
+                   |> is_admin(channel, client)
+                   |> process_auth({:filter_tag, channel, switch})
+
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
+      [channel, command, tags] when command in ["add", "delete", "replace"] ->
+        taglist = MapSet.new(String.split(tags, ","))
+        response = case command do
+                    "add" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:add_tag_filter, channel, taglist})
+                    "delete" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:delete_tag_filter, channel, taglist})
+                    "replace" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:replace_tag_filter, channel, taglist})
+                  end
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+      _ ->
+        ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `tag filter <#channel> <on|off>`")
     end
     {:noreply, state}
   end
@@ -57,17 +124,10 @@ defmodule IRC.AdminHandler do
     {:noreply, state}
   end
 
+  ##################
+
   def handle_info(_, state) do
     {:noreply, state}
-  end
-
-  @spec get_url(String.t, %ExIRC.Whois{}) :: {:ok, String.t} | {:error, atom()}
-  defp get_url(channel, user) do
-    with {:ok, :authed} <- check_auth(user),
-         {:ok, :admin}  <- check_admin(user, channel),
-         {:ok, slug}    <- Core.gib_slug(channel) do
-           {:ok, Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)}
-    end
   end
 
   @spec check_and_add_admin(String.t, String.t) :: {:ok, Ecto.Changeset.t} | {:error, atom()}
@@ -77,6 +137,114 @@ defmodule IRC.AdminHandler do
     else
       user = get_whois(nick)
       add_admin(channel, user)
+    end
+  end
+
+  def is_admin(sender, channel, client) do
+    ExIRC.Client.whois(client, sender.nick)
+    user = get_whois(sender.nick)
+    with {:ok, :authed} <- check_auth(user),
+         {:ok, :admin}  <- check_admin(user, channel),
+          do: {:ok, :admin}
+  end
+
+  def process_auth({:ok, :admin}, message) do
+    process_message(message)
+  end
+
+  def process_auth({:error, :noadmin}, _) do
+     "You're not an admin for this channel."
+  end
+
+  def process_auth({:error, :nochan}, _) do
+    "Am I getting old or did you misspell the channel's name?"
+  end
+
+  def process_auth({:error, :unauthed}) do
+    "You don't seem registered with NickServ…"
+  end
+
+  ### URL filter ###
+
+  def process_message({:show_filter_url, channel}) do
+    urllist = Repo.get_by(Chan, name: channel) |> Map.get(:settings) |> Map.get(:url_filters)
+    if (urllist != [] and urllist != nil) do
+      "Authorized URLs for #{channel} are: #{Enum.join(urllist, ", ")}."
+    else
+      "No URLs are currently filtered…"
+    end
+  end
+
+  def process_message({:filter_url, channel, switch}) do
+    Chan.switch_url_filters(String.to_atom(switch), channel)
+    "Switched urls filter #{switch} on #{channel}"
+  end
+
+  def process_message({:add_url_filter, channel, urllist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.add_url_filters(chan, urllist)
+    "URL(s) #{Enum.join(urllist, ", ")} added to the filter."
+  end
+
+  def process_message({:delete_url_filter, channel, urllist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.delete_url_filters(chan, urllist)
+    "URL(s) #{Enum.join(urllist, ", ")} deleted from the filter."
+  end
+
+  def process_message({:replace_url_filter, channel, urllist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.replace_url_filters(chan, urllist)
+    "URL(s) #{Enum.join(urllist, ", ")} are now the filter."
+  end
+
+  ### Tag filter ###
+
+  def process_message({:show_filter_tag, channel}) do
+    taglist = Repo.get_by(Chan, name: channel) |> Map.get(:settings) |> Map.get(:tag_filters)
+    if (taglist != [] and taglist != nil) do
+      "Authorized tags for #{channel} are: #{Enum.join(taglist, ", ")}."
+    else
+      "No tags are currently filtered…"
+    end
+  end
+
+  def process_message({:filter_tag, channel, switch}) do
+    Chan.switch_tag_filters(String.to_atom(switch), channel)
+    "Switched tags filter #{switch} on #{channel}"
+  end
+
+  def process_message({:add_tag_filter, channel, taglist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.add_tag_filters(chan, taglist)
+    "Tag(s) #{Enum.join(taglist, ", ")} added to the filter."
+  end
+
+  def process_message({:delete_tag_filter, channel, taglist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.delete_tag_filters(chan, taglist)
+    "Tag(s) #{Enum.join(taglist, ", ")} deleted from the filter."
+  end
+
+  def process_message({:replace_tag_filter, channel, taglist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.replace_tag_filters(chan, taglist)
+    "Tag(s) #{Enum.join(taglist, ", ")} are now the filter."
+  end
+
+  ### Misc ###
+
+  def process_message({:show_url, channel}) do
+    {:ok, slug} = Chan.gib_slug(channel)
+    Web.Router.Helpers.chan_url(Web.Endpoint, :show, slug)
+  end
+
+  def process_message({:add_admin, channel, nick}) do
+    case check_and_add_admin(channel, nick) do
+      {:ok, _} ->
+        "Admin #{nick} succesfully added for #{channel}."
+      {:error, :invalid} ->
+        "Invalid syntax. Please use `add admin <#channel> <nickname>."
     end
   end
 end

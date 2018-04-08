@@ -6,7 +6,7 @@ defmodule Core.Admin do
   schema "admins" do
     field :nickname, :string
     field :account_name, :string
-    many_to_many :chans, Core.Chan,
+    many_to_many :chans, Chan,
                   join_through: "chan_admins"
 
     timestamps()

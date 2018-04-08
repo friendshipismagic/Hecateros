@@ -1,6 +1,7 @@
 defmodule IRC.LinksHandler do
 
   alias IRC.{State, Helpers}
+  alias Core.Repo
   use GenServer
   require Logger
 
@@ -26,11 +27,14 @@ defmodule IRC.LinksHandler do
   end
 
   def parse(message, chan) do
+    channel        =  String.downcase(chan)
     with {:ok, url}         <- parse_url(message),
          {:ok, taglist}     <- parse_tags(message),
-         {:ok, title, desc} <- Helpers.get_info(url),
-         channel        =  String.downcase(chan) do
+         {:ok, :ok}         <- check_filters(url, taglist, channel),
+         {:ok, title, desc} <- Helpers.get_info(url) do
            {:ok, %{tags: taglist, url: url, chan: channel, title: title, description: desc}}
+    else
+      e -> e
     end
   end
 
@@ -68,6 +72,42 @@ defmodule IRC.LinksHandler do
       %URI{scheme: nil} -> {:error, :invalid}
       %URI{host: nil, path: nil} -> {:error, :invalid}
       _ -> {:ok, url}
+    end
+  end
+
+  def check_filters(url, taglist, channel_name) do
+    chan = Repo.get_by(Chan, name: channel_name)
+    t = with true <- chan.settings.has_tag_filter?,
+             :ok  <- is_in_filters([tags: taglist, chan: chan]) do
+              :ok
+        else
+          :filtered -> :filtered
+          false     -> :ok
+        end
+
+    u = with true <- chan.settings.has_url_filter?,
+             :ok  <- is_in_filters([url: url, chan: chan]) do
+               :ok
+        else
+          :filtered -> :filtered
+          false     -> :ok
+        end
+    {t, u}
+  end
+
+  def is_in_filters([url: url, chan: chan]) do
+    if url in chan.settings.url_filters do
+      :filtered
+    else
+      :ok
+    end
+  end
+
+  def is_in_filters([tags: tags, chan: chan]) do
+    if Enum.all?(tags, fn t -> t in chan.settings.tag_filters end) do
+      :ok
+    else
+      :filtered
     end
   end
 end
