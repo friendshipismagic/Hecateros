@@ -3,6 +3,7 @@ defmodule Hecateros.Mixfile do
 
   def project do
     [
+      version: "1.0-beta",
       apps_path: "apps",
       start_permanent: Mix.env == :prod,
       aliases: aliases()
