@@ -41,12 +41,37 @@ defmodule IRC.AdminHandler do
   end
 
   def handle_info({:received, "url filter " <> rest, sender}, client=state) do
+    IO.puts rest
     case String.split(String.downcase(rest), " ") do
+      [channel, "show"] ->
+        response = sender
+                   |> is_admin(channel, client)
+                   |> process_auth({:show_filter_url, channel})
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
       [channel, switch] when switch in ["on", "off"] ->
         response = sender
                    |> is_admin(channel, client)
                    |> process_auth({:filter_url, channel, switch})
 
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
+      [channel, command, urls] when command in ["add", "delete", "replace"] ->
+        urllist = MapSet.new(String.split(urls, ","))
+        response = case command do
+                    "add" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:add_url_filter, channel, urllist})
+                    "delete" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:delete_url_filter, channel, urllist})
+                    "replace" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:replace_url_filter, channel, urllist})
+                  end
         ExIRC.Client.msg(client, :privmsg, sender.nick, response)
       _ ->
         ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `url filter <#channel> <on|off>`")
@@ -139,15 +164,49 @@ defmodule IRC.AdminHandler do
     "You don't seem registered with NickServ…"
   end
 
+  ### URL filter ###
+
+  def process_message({:show_filter_url, channel}) do
+    urllist = Repo.get_by(Chan, name: channel) |> Map.get(:settings) |> Map.get(:url_filters)
+    if (urllist != [] and urllist != nil) do
+      "Authorized URLs for #{channel} are: #{Enum.join(urllist, ", ")}."
+    else
+      "No URLs are currently filtered…"
+    end
+  end
 
   def process_message({:filter_url, channel, switch}) do
     Chan.switch_url_filters(String.to_atom(switch), channel)
-    "Switched URL filter #{switch} on #{channel}."
+    "Switched urls filter #{switch} on #{channel}"
   end
+
+  def process_message({:add_url_filter, channel, urllist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.add_url_filters(chan, urllist)
+    "URL(s) #{Enum.join(urllist, ", ")} added to the filter."
+  end
+
+  def process_message({:delete_url_filter, channel, urllist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.delete_url_filters(chan, urllist)
+    "URL(s) #{Enum.join(urllist, ", ")} deleted from the filter."
+  end
+
+  def process_message({:replace_url_filter, channel, urllist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.replace_url_filters(chan, urllist)
+    "URL(s) #{Enum.join(urllist, ", ")} are now the filter."
+  end
+
+  ### Tag filter ###
 
   def process_message({:show_filter_tag, channel}) do
     taglist = Repo.get_by(Chan, name: channel) |> Map.get(:settings) |> Map.get(:tag_filters)
-    "Authorized tags for #{channel} are: #{Enum.join(taglist, ", ")}."
+    if (taglist != [] and taglist != nil) do
+      "Authorized tags for #{channel} are: #{Enum.join(taglist, ", ")}."
+    else
+      "No tags are currently filtered…"
+    end
   end
 
   def process_message({:filter_tag, channel, switch}) do
@@ -166,6 +225,14 @@ defmodule IRC.AdminHandler do
     Chan.delete_tag_filters(chan, taglist)
     "Tag(s) #{Enum.join(taglist, ", ")} deleted from the filter."
   end
+
+  def process_message({:replace_tag_filter, channel, taglist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.replace_tag_filters(chan, taglist)
+    "Tag(s) #{Enum.join(taglist, ", ")} are now the filter."
+  end
+
+  ### Misc ###
 
   def process_message({:show_url, channel}) do
     {:ok, slug} = Chan.gib_slug(channel)
