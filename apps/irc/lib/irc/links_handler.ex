@@ -29,14 +29,11 @@ defmodule IRC.LinksHandler do
 
   def parse(message, chan) do
     channel = Repo.get_by(Chan, name: String.downcase(chan))
-    with {:ok, url}         <- parse_url(message),
-         {:ok, taglist}     <- parse_tags(message),
-         {:ok, :ok}         <- check_filters(url, taglist, channel),
+    with {:url, url}        <- parse_url(message,  channel),
+         {:tags, taglist}   <- parse_tags(message, channel),
          {:ok, title, desc} <- Helpers.get_info(url) do
-            foreign_tags = MapSet.new(taglist)
-            chan_tags    = MapSet.new(channel.settings.tag_filters)
-            newtaglist = MapSet.intersection(chan_tags, foreign_tags)
-            {:ok, %{tags: newtaglist, url: url, chan: channel.name, title: title, description: desc}}
+            Logger.debug "Taglist: #{inspect taglist}"
+            {:ok, %{tags: taglist, url: url, chan: channel.name, title: title, description: desc}}
     else
       e -> e
     end
@@ -47,62 +44,49 @@ defmodule IRC.LinksHandler do
   end
   def insert(_), do: nil
 
-  def parse_tags(message) do
+  def parse_tags(message, channel) do
     tags_regex = ~r/(?<=\#)(.*?)(?=\#)/
     case Regex.run(tags_regex, message, capture: :first) do
       nil    -> {:error, :notag}
       [tags] ->
-        taglist =
-          tags
-          |> String.replace(" ", "")
-          |> String.split(",")
-          |> Enum.map(fn tag -> String.downcase tag end)
+        taglist = tags
+                  |> String.replace(" ", "")
+                  |> String.split(",")
+                  |> Enum.map(fn tag -> String.downcase tag end)
 
-        {:ok, taglist}
+        if channel.settings.has_tag_filter? do
+          case is_in_filters([tags: taglist, chan: channel]) do
+            {:tags, taglist}       -> {:tags, taglist}
+            {:error, :filtered} -> {:error, :filtered}
+          end
+        else
+          {:tags, taglist}
+        end
     end
   end
 
 
-  def parse_url(message) do
+  def parse_url(message, channel) do
     url_regex = ~r/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/iu
     case Regex.run(url_regex, message, capture: :first) do
       nil   -> {:error, :nolink}
-      [url] -> url |> String.split("#") |> hd |> validate_url
+      [url] -> url |> String.split("#") |> hd |> validate_url(channel)
     end
   end
 
-  defp validate_url(url) do
+  defp validate_url(url, channel) do
     case URI.parse(url) do
-      %URI{scheme: nil} -> {:error, :invalid}
+      %URI{scheme: nil}          -> {:error, :invalid}
       %URI{host: nil, path: nil} -> {:error, :invalid}
-      _ -> {:ok, url}
+      _                          -> is_in_filters([url: url, chan: channel])
     end
-  end
-
-  def check_filters(url, taglist, channel) do
-    t = with true <- channel.settings.has_tag_filter?,
-             :ok  <- is_in_filters([tags: taglist, chan: channel]) do
-              :ok
-        else
-          :filtered -> :filtered
-          false     -> :ok
-        end
-
-    u = with true <- channel.settings.has_url_filter?,
-             :ok  <- is_in_filters([url: url, chan: channel]) do
-               :ok
-        else
-          :filtered -> :filtered
-          false     -> :ok
-        end
-    {t, u}
   end
 
   def is_in_filters([url: url, chan: channel]) do
     if URI.parse(url).host in channel.settings.url_filters do
-      :filtered
+      {:error, :filtered}
     else
-      :ok
+      {:url, url}
     end
   end
 
@@ -110,8 +94,8 @@ defmodule IRC.LinksHandler do
     foreign_tags = MapSet.new(tags)
     chan_tags    = MapSet.new(chan.settings.tag_filters)
     case MapSet.intersection(chan_tags, foreign_tags) do
-      %MapSet{} -> :filtered
-      _         -> :ok
+      %MapSet{} -> {:error, :filtered}
+      tags      -> {:tags, tags}
     end
   end
 end
