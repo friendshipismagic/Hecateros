@@ -50,9 +50,10 @@ release :hecateros do
     "migrate": "rel/commands/migrate.sh"
   ]
 
-  set version: "0.1.0"
+  set version: "1.0-beta"
   set applications: [
     :runtime_tools,
+    :parse_trans,
     :sbroker,
     core: :permanent,
     irc: :permanent,
