@@ -8,6 +8,17 @@ Hekateros sits on an IRC channel and parses the http links that are posted on it
 
 You can find a live version on the [RezoSup](https://chat.rezosup.org/) on #Ekta-bots
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Key features](#key-features)
+- [Administration](#administration)
+- [Deployment](#deployment)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ## Key features
 
