@@ -19,6 +19,19 @@ defmodule IRC.AdminHandler do
 
   #### Messages ####
 
+  def handle_info({:received, "summary " <> channel, sender}, client=state) do
+    channel = channel |> String.downcase |> String.trim
+
+    response = sender
+               |> is_admin(channel, client)
+               |> process_auth({:summary, channel})
+               |> String.split("\n")
+    Enum.each(response, fn msg ->
+      ExIRC.Client.msg(client, :privmsg, sender.nick, msg)
+    end)
+    {:noreply, state}
+  end
+
   def handle_info({:received, "show url " <> rest, sender}, client=state) do
     channel = rest |> String.downcase |> String.trim
 
@@ -169,7 +182,7 @@ defmodule IRC.AdminHandler do
   def process_message({:show_filter_url, channel}) do
     urllist = Repo.get_by(Chan, name: channel) |> Map.get(:settings) |> Map.get(:url_filters)
     if (urllist != [] and urllist != nil) do
-      "Authorized URLs for #{channel} are: #{Enum.join(urllist, ", ")}."
+      "Forbidden URLs for #{channel} are: #{Enum.join(urllist, ", ")}."
     else
       "No URLs are currently filtered…"
     end
@@ -233,6 +246,34 @@ defmodule IRC.AdminHandler do
   end
 
   ### Misc ###
+
+  def process_message({:summary, channel_name}) do
+    chan = Repo.get_by(Chan, name: channel_name) |> Repo.preload(:admins)
+    tag_filters_status =  if chan.settings.has_tag_filter? do
+                            "[\x02\x0303activated\x03\x0F]  "
+                          else
+                            "[\x02\x0304deactivated\x03\x0F]"
+                          end
+
+    url_filters_status =  if chan.settings.has_url_filter? do
+                            "[\x02\x0303activated\x03\x0F]  "
+                          else
+                            "[\x02\x0304deactivated\x03\x0F]"
+                          end
+    url_filters = Enum.join(chan.settings.url_filters, ", ")
+    tag_filters = Enum.join(chan.settings.tag_filters, ", ")
+    
+    admins = Enum.map(chan.admins, fn a -> a.account_name end) |> Enum.join(", ")
+    """
+    \x03\x1FSummary for #{channel_name}\x0F
+    URL: #{process_message({:show_url, channel_name})}
+     
+    \x03\x02Admins:\x0F\x03 #{admins}
+     
+    #{tag_filters_status} Tag filters: #{tag_filters}
+    #{url_filters_status} URL filters: #{url_filters}
+    """
+  end
 
   def process_message({:show_url, channel}) do
     {:ok, slug} = Chan.gib_slug(channel)
