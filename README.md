@@ -1,50 +1,24 @@
-# Hécatéros ![GitHub tag](https://img.shields.io/github/tag/friendshipismagic/hecateros.svg) / ![Beta badge](cycle-beta-yellow.svg)
+# Hekateros ![GitHub tag](https://img.shields.io/github/tag/friendshipismagic/hekateros.svg) / ![Beta badge](cycle-beta-yellow.svg)
 
->Dieu de l'hécatéris, danse utilisant rapidement les mains…
-
-* [Les tags](#les-tags)
-* [Configuration](#configuration)
-* [TODO](#todo)
+>God of the *hekateris*, a dance which involves quickly moving hands
 
 ![](beta-stamp.png)
 
-Hécatéros repose sur un canal IRC et récupère les liens qui y sont posté. Il affiche une interface web pour les parcourir.
+Hekateros sits on an IRC channel and parses the http links that are posted on it, then displays them on a web interface.
 
-Pour plus de *privacy*, les URL des canaux dans l'interface web ne seront pas nominatives mais seront de la forme
-`https://hecateros.example.org/c/UUID`.
+You can find a live version on the RezoSup network, channel #Ekta
 
-Vous trouverez une version *live* du bot sur le réseau RezoSup.
+## How it works
 
-## Les tags
+Each time Hekateros sees a link that comes with tags, such as `http://example.org #example, w3c#` (1 link, two comma-separated tags enclosed in hashes), it
+will parse it and record it in its database.
 
-Pour mieux aider à catégoriser les liens postés, un système de tags est disponible (ou bientôt disponible, suivant votre continuum spatio-temporel).
+### Filtering
 
-* Soit le bot prend ce qu'il trouve comme tags et les ajoute à sa base de données.
-* Soit le bot fait correspondre les tags à une liste pré-définie (mais extensible) et dans ce cas-là refusera poliment les tags non-conformes mais prendra
-    les bons tags.
+Filtering is done at the core of the IRC module. You can switch it on and off at runtime, and provide a list of available tags and disabled URLs.
 
-Cela permettra une recherche par tags dans l'interface web, voir une commande spéciale pour faire apparaître les 5 derniers liens correspondant à tel tag.
-
-Les tags sont insensibles à la casse et idéalement ne comporteraient qu'un seul mot.
-
-Exemples de syntaxe possible :
-
-1. `< Theophane> https://example.org #exemple,w3c#`
-2. `< Theophane> Hey checkez ce lien : https://example.org/foobarlol #exemple, w3c#`
-
-Possible façon de faire pour les URL sans tags: 
-
-1. Soit on la stock pas.
-2. Soit on la stock sans tags, et si elle réapparaît avec tags, on met juste à jour les tags.
-
-
-## Configuration
-
-Les fichiers de configuration se situent dans le dossier `config/` à la racine du projet.  
-Il est prévu de pouvoir y inclure plusieurs options comme ajouter ou retirer un prefix de protocol, ou d'empêcher certains liens
-(sourcer un fichier de blacklist ?). Ces options-là seront également fournies au runtime par les fonctions appropriées.
-
-## Déploiement
+![Filtering](filtering.png)
+## Deployment
 
 Un dossier `deploy` fourni un playbook Ansible avec le template et les fichiers de configuration utilisés. Le fichier `hosts` utilisé doit exporter la
 variable `public_inteface` qui correspond à l'adresse sur laquelle Nginx va écouter.
