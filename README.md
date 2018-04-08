@@ -1,4 +1,4 @@
-# Hécatéros
+# Hécatéros ![GitHub tag](https://img.shields.io/github/tag/friendshipismagic/hecateros.svg) / ![Beta badge](cycle-beta-yellow.svg)
 
 >Dieu de l'hécatéris, danse utilisant rapidement les mains…
 
@@ -6,8 +6,7 @@
 * [Configuration](#configuration)
 * [TODO](#todo)
 
-AVERTISSEMENT: En l'état, ce programme est tout sauf prêt à être utilisé de façon pérenne. Chaque commit va changer un comportement, fixer un bug et en
-introduire d'autres. BEWARE.
+![](beta-stamp.png)
 
 Hécatéros repose sur un canal IRC et récupère les liens qui y sont posté. Il affiche une interface web pour les parcourir.
 
@@ -15,7 +14,6 @@ Pour plus de *privacy*, les URL des canaux dans l'interface web ne seront pas no
 `https://hecateros.example.org/c/UUID`.
 
 Vous trouverez une version *live* du bot sur le réseau RezoSup.
-
 
 ## Les tags
 
