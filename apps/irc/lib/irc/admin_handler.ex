@@ -3,7 +3,7 @@ defmodule IRC.AdminHandler do
   alias IRC.State
   import IRC.Helpers, only: [get_whois: 1, check_auth: 1]
   import Core.Users, only: [check_admin: 2, add_admin: 2]
-  alias Core.Chan
+  alias Core.{Chan,Repo}
   require Logger
   use GenServer
 
@@ -55,12 +55,37 @@ defmodule IRC.AdminHandler do
   end
 
   def handle_info({:received, "tag filter " <> rest, sender}, client=state) do
+    IO.puts rest
     case String.split(String.downcase(rest), " ") do
+      [channel, "show"] ->
+        response = sender
+                   |> is_admin(channel, client)
+                   |> process_auth({:show_filter_tag, channel})
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
       [channel, switch] when switch in ["on", "off"] ->
         response = sender
                    |> is_admin(channel, client)
                    |> process_auth({:filter_tag, channel, switch})
 
+        ExIRC.Client.msg(client, :privmsg, sender.nick, response)
+
+      [channel, command, tags] when command in ["add", "delete", "replace"] ->
+        taglist = MapSet.new(String.split(tags, ","))
+        response = case command do
+                    "add" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:add_tag_filter, channel, taglist})
+                    "delete" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:delete_tag_filter, channel, taglist})
+                    "replace" ->
+                      sender
+                      |> is_admin(channel, client)
+                      |> process_auth({:replace_tag_filter, channel, taglist})
+                  end
         ExIRC.Client.msg(client, :privmsg, sender.nick, response)
       _ ->
         ExIRC.Client.msg(client, :privmsg, sender.nick, "Invalid syntax. Please use `tag filter <#channel> <on|off>`")
@@ -114,14 +139,32 @@ defmodule IRC.AdminHandler do
     "You don't seem registered with NickServ…"
   end
 
+
   def process_message({:filter_url, channel, switch}) do
     Chan.switch_url_filters(String.to_atom(switch), channel)
     "Switched URL filter #{switch} on #{channel}."
   end
 
+  def process_message({:show_filter_tag, channel}) do
+    taglist = Repo.get_by(Chan, name: channel) |> Map.get(:settings) |> Map.get(:tag_filters)
+    "Authorized tags for #{channel} are: #{Enum.join(taglist, ", ")}."
+  end
+
   def process_message({:filter_tag, channel, switch}) do
     Chan.switch_tag_filters(String.to_atom(switch), channel)
     "Switched tags filter #{switch} on #{channel}"
+  end
+
+  def process_message({:add_tag_filter, channel, taglist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.add_tag_filters(chan, taglist)
+    "Tag(s) #{Enum.join(taglist, ", ")} added to the filter."
+  end
+
+  def process_message({:delete_tag_filter, channel, taglist}) do
+    chan = Repo.get_by(Chan, name: channel)
+    Chan.delete_tag_filters(chan, taglist)
+    "Tag(s) #{Enum.join(taglist, ", ")} deleted from the filter."
   end
 
   def process_message({:show_url, channel}) do
@@ -134,7 +177,7 @@ defmodule IRC.AdminHandler do
       {:ok, _} ->
         "Admin #{nick} succesfully added for #{channel}."
       {:error, :invalid} ->
-        "Invalid syntax. Please use `add admin <#channel> <nickname>"
+        "Invalid syntax. Please use `add admin <#channel> <nickname>."
     end
   end
 end

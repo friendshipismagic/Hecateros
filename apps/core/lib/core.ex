@@ -3,7 +3,6 @@ defmodule Core do
   """
   alias Core.{Chan,Link}
   require Logger
-  import Ecto.Query
 
   defdelegate get_links(criteria, slug), to: Link
   defdelegate insert_link(map),          to: Link

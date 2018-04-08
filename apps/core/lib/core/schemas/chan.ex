@@ -24,7 +24,7 @@ defmodule Core.Chan do
     timestamps()
   end
 
-  @type t :: %__MODULE__{name: String.t, slug: String.t}
+  @type t :: %__MODULE__{name: String.t, slug: String.t, settings: %Core.Chan.Settings{}}
 
   @doc false
   def changeset(%Chan{} = chan, attrs \\ %{}) do
@@ -61,6 +61,36 @@ defmodule Core.Chan do
 
   ## Tag Filters ##
 
+  @spec add_tag_filters(t(), MapSet.t(String.t)) :: Ecto.Changeset.t | no_return
+  def add_tag_filters(%Chan{}=chan, tags) do
+    chg = if chan.settings.tag_filters == nil do
+            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:tag_filters, tags)
+          else
+            newtags = MapSet.union(tags, MapSet.new(chan.settings.tag_filters))
+            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:tag_filters, newtags)
+          end
+
+    chan
+    |> Ecto.Changeset.change
+    |> Ecto.Changeset.put_embed(:settings, chg)
+    |> Repo.update!
+  end
+
+  @spec delete_tag_filters(t(), MapSet.t(String.t)) :: Ecto.Changeset.t | no_return
+  def delete_tag_filters(%Chan{}=chan, tags) do
+    chg = if chan.settings.tag_filters == nil do
+            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:tag_filters, [])
+          else
+            newtags = MapSet.difference(MapSet.new(chan.settings.tag_filters), tags)
+            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:tag_filters, newtags)
+          end
+
+    chan
+    |> Ecto.Changeset.change
+    |> Ecto.Changeset.put_embed(:settings, chg)
+    |> Repo.update!
+  end
+
   @doc "Take a `%Core.Chan{}` struct, or just its name, and flick the switch for the filter feature."
   def switch_tag_filters(:on, chan) when is_binary(chan) do
     Chan
@@ -74,7 +104,7 @@ defmodule Core.Chan do
     |> turn_tag_filter(false)
   end
 
-  def turn_tag_filter(%Chan{}=chan, bool) do
+  defp turn_tag_filter(%Chan{}=chan, bool) do
     chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_tag_filter?, bool)
     chan
     |> Ecto.Changeset.change
@@ -83,6 +113,21 @@ defmodule Core.Chan do
   end
 
   ## URL Filters ##
+
+  @spec add_url_filter(t(), MapSet.t(String.t)) :: Ecto.Changeset.t | no_return
+  def add_url_filter(%Chan{}=chan, urls) do
+    chg = if chan.settings.url_filters == nil do
+            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:url_filters, urls)
+          else
+            newurls = MapSet.union(urls, MapSet.new(chan.settings.url_filters))
+            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:url_filters, newurls)
+          end
+
+    chan
+    |> Ecto.Changeset.change
+    |> Ecto.Changeset.put_embed(:settings, chg)
+    |> Repo.update!
+  end
 
   def switch_url_filters(:on, chan) when is_binary(chan) do
     Chan
@@ -96,13 +141,15 @@ defmodule Core.Chan do
     |> turn_url_filter(false)
   end
 
-  def turn_url_filter(%Chan{}=chan, bool) do
+  defp turn_url_filter(%Chan{}=chan, bool) do
     chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_url_filter?, bool)
     chan
     |> Ecto.Changeset.change
     |> Ecto.Changeset.put_embed(:settings, chg)
     |> Repo.update!
   end
+
+  ## Misc ##
 
   @spec gib_slug(String.t) :: {:ok, String.t}
   def gib_slug(channel) when is_binary(channel) do
