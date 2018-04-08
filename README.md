@@ -1,4 +1,4 @@
-# Hekateros ![GitHub tag](https://img.shields.io/github/tag/friendshipismagic/hekateros.svg) / ![Beta badge](cycle-beta-yellow.svg)
+<h1 align=center>Hekateros <img src="https://img.shields.io/github/tag/friendshipismagic/hekateros.svg"> / <img src="cycle-beta-yellow.svg"></h1>
 
 ![Logo](Hekateros.svg)
 
