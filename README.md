@@ -27,6 +27,7 @@ You can find a live version on the [RezoSup](https://chat.rezosup.org/) on #Ekta
 3. No external DBMS. It uses SQLite3 as an on-disk storage. Backup your data as easily as `scp`.
 4. A responsive web interface.
 
+
 ## Administration
 
 Hekateros provides an administration interface from IRC. You must be a registered administrator in the bot's system to operate it.
@@ -38,8 +39,8 @@ administrators.
 
 ## Deployment
 
-Un dossier `deploy` fourni un playbook Ansible avec le template et les fichiers de configuration utilisés. Le fichier `hosts` utilisé doit exporter la
-variable `public_inteface` qui correspond à l'adresse sur laquelle Nginx va écouter.
+You can find an Ansible playbook in the `deploy` fodler with the template and configuration files. The inventory must export the `public_interface` variable, which is the address Nginx will be listening on.
+
 
 ## License
 
