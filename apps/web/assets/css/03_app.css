@@ -38,10 +38,13 @@
   }
 }
 
+.frontpage{
+  font-size: 1.7em;
+}
+
 footer{
   bottom:0;
   height:100px;
   margin-top: 2em;
   text-align: center;
-  width:400px;
 }
