@@ -22,10 +22,9 @@ defmodule IRC.Helpers do
 
   def get_title(body) do
     og = OpenGraphExtended.parse(body)
-    if og.title do
-      {:ok, og.title}
-    else
-      parse_title(body)
+    case og.title do
+      nil   -> parse_title(body)
+      title -> {:ok, title}
     end
   end
 
@@ -39,13 +38,13 @@ defmodule IRC.Helpers do
     {:ok, title}
   end
 
+  @spec get_desc(String.t) :: {:ok, String.t} | {:error, :nodesc}
   defp get_desc(body) do
     og = OpenGraphExtended.parse(body)
 
-    if og.description do
-      {:ok, og.description}
-    else
-      {:error, :nodesc}
+    case og.description do
+      nil  -> {:error, :nodesc}
+      desc -> {:ok, desc}
     end
   end
 

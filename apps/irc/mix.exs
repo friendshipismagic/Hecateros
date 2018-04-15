@@ -27,7 +27,7 @@ defmodule IRC.Mixfile do
   defp deps do
     [
       {:core, in_umbrella: true},
-      {:exirc, github: "bitwalker/exirc"},
+      {:exirc, github: "bitwalker/exirc", runtime: Mix.env() != :test},
       {:open_graph_extended, "~> 0.1"},
       {:web,  in_umbrella: true}
     ]

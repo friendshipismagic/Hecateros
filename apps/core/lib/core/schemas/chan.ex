@@ -113,7 +113,7 @@ defmodule Core.Chan do
     |> turn_tag_filter(false)
   end
 
-  defp turn_tag_filter(%Chan{}=chan, bool) do
+  defp turn_tag_filter(%Chan{}=chan, bool) when is_boolean(bool) do
     chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:has_tag_filter?, bool)
     chan
     |> Ecto.Changeset.change
@@ -138,7 +138,7 @@ defmodule Core.Chan do
   end
 
   @spec delete_url_filters(t(), MapSet.t(String.t)) :: Ecto.Changeset.t | no_return
-  def delete_url_filters(%Chan{}=chan, urls) do
+  def delete_url_filters(%Chan{}=chan, %MapSet{}=urls) do
     chg = if chan.settings.url_filters == nil do
             Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:url_filters, [])
           else
@@ -153,23 +153,8 @@ defmodule Core.Chan do
   end
 
   @spec replace_url_filters(t(), MapSet.t(String.t)) :: Ecto.Changeset.t | no_return
-  def replace_url_filters(%Chan{}=chan, urls) do
+  def replace_url_filters(%Chan{}=chan, %MapSet{}=urls) do
     chg = Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:url_filters, urls)
-    chan
-    |> Ecto.Changeset.change
-    |> Ecto.Changeset.put_embed(:settings, chg)
-    |> Repo.update!
-  end
-
-  @spec add_url_filter(t(), MapSet.t(String.t)) :: Ecto.Changeset.t | no_return
-  def add_url_filter(%Chan{}=chan, urls) do
-    chg = if chan.settings.url_filters == nil do
-            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:url_filters, urls)
-          else
-            newurls = MapSet.union(urls, MapSet.new(chan.settings.url_filters))
-            Ecto.Changeset.change(chan.settings) |> Ecto.Changeset.put_change(:url_filters, newurls)
-          end
-
     chan
     |> Ecto.Changeset.change
     |> Ecto.Changeset.put_embed(:settings, chg)

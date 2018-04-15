@@ -56,8 +56,8 @@ defmodule IRC.LinksHandler do
 
         if channel.settings.has_tag_filter? do
           case is_in_filters([tags: taglist, chan: channel]) do
-            {:tags, taglist}       -> {:tags, taglist}
-            {:error, :filtered} -> {:error, :filtered}
+            {:tags, taglist}     -> {:tags, taglist}
+            {:error, :filtered}  -> {:error, :filtered}
           end
         else
           {:tags, taglist}
@@ -82,6 +82,7 @@ defmodule IRC.LinksHandler do
     end
   end
 
+  @spec is_in_filters(keyword(String.t)) :: {:url,  URI.t } | {:tags, String.t} | {:error, :filtered}
   def is_in_filters([url: url, chan: channel]) do
     if URI.parse(url).host in channel.settings.url_filters do
       {:error, :filtered}

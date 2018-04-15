@@ -21,8 +21,8 @@ defmodule IRC.ChannelHandler do
     if user.account_name == nil do
       ExIRC.Client.msg(client, :privmsg, sender.nick, "Sorry, you don't seem to be registered to NickServ. I can't let you administrate Hecateros on #{chan}.")
     else
-      ExIRC.Client.join(client, chan)
       Chan.create_chan(%{name: chan, slug: Link.create_slug()})
+      ExIRC.Client.join(client, chan)
       case Core.Users.check_admin(user, chan) do
         {:ok, :admin} ->
           nil

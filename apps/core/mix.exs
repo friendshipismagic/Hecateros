@@ -36,6 +36,7 @@ defmodule Core.Mixfile do
       {:prometheus_plugs, "~> 1.1"},
       {:prometheus_process_collector, "~> 1.3"},
       {:sqlite_ecto2, "~> 2.2"},
+      {:stream_data, "~> 0.4", only: :test},
       {:tesla, "~> 0.10"}
     ]
   end
