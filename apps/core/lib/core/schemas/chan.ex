@@ -101,6 +101,7 @@ defmodule Core.Chan do
   end
 
   @doc "Take a `%Core.Chan{}` struct, or just its name, and flick the switch for the filter feature."
+  @spec switch_tag_filters(:on|:off, String.t) :: Ecto.Changeset.t | no_return
   def switch_tag_filters(:on, chan) when is_binary(chan) do
     Chan
     |> Repo.get_by(name: chan)
